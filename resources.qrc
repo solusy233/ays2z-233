@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/images">
+    <file alias="background-dark.png">05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
+    <file alias="background-light.png">4212745f-4621-42f5-93e3-a66aaa597e1d.png</file>
+    <file alias="settings.png">aboutwindows/settings/settings.png</file>
+</qresource>
+</RCC>

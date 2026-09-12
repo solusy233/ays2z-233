@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1774</width>
+    <height>887</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget#centralwidget {
+     background-image: url(:/images/background-dark.png);
+     background-position: center;
+     background-repeat: no-repeat;
+  }</string>
+   </property>
+   <widget class="QPushButton" name="settingsButton">
+    <property name="geometry">
+     <rect>
+      <x>1430</x>
+      <y>40</y>
+      <width>130</width>
+      <height>55</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>130</width>
+      <height>55</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>130</width>
+      <height>55</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>打开设置</string>
+    </property>
+    <property name="accessibleName">
+     <string>设置</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton#settingsButton {
+    color: white;
+    background-color: rgba(20, 45, 95, 220);
+    border: 2px solid #f5d994;
+    border-radius: 8px;
+    padding: 4px;
+}
+QPushButton#settingsButton:hover {
+    background-color: rgba(40, 75, 135, 240);
+}
+QPushButton#settingsButton:pressed {
+    background-color: rgba(10, 25, 60, 240);
+}</string>
+    </property>
+    <property name="text">
+     <string>设置</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1774</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "构建 Qt 项目",
+            "type": "shell",
+            "command": "C:\\Qt\\Tools\\CMake_64\\bin\\cmake.exe",
+            "args": [
+                "--build",
+                "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}

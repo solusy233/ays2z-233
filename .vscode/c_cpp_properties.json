@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Qt MinGW",
+            "compilerPath": "C:\\Qt\\Tools\\mingw1310_64\\bin\\g++.exe",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Qt/6.9.1/mingw_64/include",
+                "C:/Qt/6.9.1/mingw_64/include/QtCore",
+                "C:/Qt/6.9.1/mingw_64/include/QtGui",
+                "C:/Qt/6.9.1/mingw_64/include/QtWidgets",
+                "C:/Qt/6.9.1/mingw_64/include/QtMultimedia",
+                "${workspaceFolder}/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/untitled_autogen/include"
+            ],
+            "defines": [
+                "QT_WIDGETS_LIB",
+                "QT_GUI_LIB",
+                "QT_CORE_LIB",
+                "QT_MULTIMEDIA_LIB"
+            ]
+        }
+    ],
+    "version": 4
+}

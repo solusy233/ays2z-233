@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "运行 Qt 项目",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug\\untitled.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "C:\\Qt\\6.9.1\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1310_64\\bin;${env:PATH}"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\Qt\\Tools\\mingw1310_64\\bin\\gdb.exe",
+            "preLaunchTask": "构建 Qt 项目"
+        }
+    ]
+}
