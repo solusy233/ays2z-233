@@ -20,9 +20,6 @@ public:
     explicit SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent = nullptr);
     ~SettingsWindow();
 
-signals:
-    void backgroundChangeRequested();
-
 private:
     Ui::SettingsWindow *ui;
     WeatherWindow *weatherWindow;

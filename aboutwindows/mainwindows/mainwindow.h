@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 
 class QCloseEvent;
 class AutoPoweroff;
@@ -29,7 +30,7 @@ private:
     WeatherApi *weatherApi;
     WeatherWindow *weatherWindow;
     SettingsWindow *settingsWindow;
-    int backgroundIndex;
+    QSystemTrayIcon *m_trayIcon;
 
 protected:
     void closeEvent(QCloseEvent *event) override;

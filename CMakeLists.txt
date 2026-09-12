@@ -67,7 +67,7 @@ add_custom_command(TARGET untitled POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_SOURCE_DIR}/settings.json"
             "$<TARGET_FILE_DIR:untitled>/settings.json"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/weather/picture"
             "$<TARGET_FILE_DIR:untitled>/weather/picture"
 )

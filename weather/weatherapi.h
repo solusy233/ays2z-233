@@ -2,10 +2,11 @@
 #define WEATHERAPI_H
 
 #include <QObject>
+#include <QTime>
 #include <QString>
 
-
 class QNetworkAccessManager;
+class QTimer;
 
 struct WeatherData
 {
@@ -26,6 +27,10 @@ public:
 
     void setApiKey(const QString &apiKey);
     void fetchAnyangWeather();
+    void startDailyFetchSchedule(const QTime &fetchTime = QTime(21, 0));
+
+private slots:
+    void checkDailyFetchSchedule();
 
 signals:
     void weatherReady(const WeatherData &weather);
@@ -33,6 +38,9 @@ signals:
 
 private:
     QNetworkAccessManager *networkManager;
+    QTimer *dailyFetchTimer;
+    QTime fetchTime;
+    QDate lastFetchDate;
     QString apiKey;
 };
 

@@ -98,19 +98,6 @@
       <string>打开天气窗口</string>
     </property>
    </widget>
-  <widget class="QPushButton" name="backgroundButton">
-   <property name="geometry">
-    <rect>
-     <x>1090</x>
-     <y>250</y>
-     <width>160</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>切换背景</string>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="geometry">
     <rect>

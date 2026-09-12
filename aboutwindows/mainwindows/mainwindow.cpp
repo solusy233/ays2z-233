@@ -6,14 +6,9 @@
 #include "../../weather/weatherwindow.h"
 #include <QCloseEvent>
 #include <QDebug>
+#include <QMenu>
 #include <QPainter>
-
-namespace {
-const QStringList backgroundResources = {
-    QStringLiteral(":/images/background-dark.png"),
-    QStringLiteral(":/images/background-light.png")
-};
-}
+#include <QAction>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     , weatherApi(new WeatherApi(this))
     , weatherWindow(nullptr)
     , settingsWindow(nullptr)
-    , backgroundIndex(0)
+    , m_trayIcon(new QSystemTrayIcon(QIcon(QStringLiteral(":/images/tray-icon.jpg")), this))
 {
     ui->setupUi(this);
     setFixedSize(size());
@@ -35,13 +30,37 @@ MainWindow::MainWindow(QWidget *parent)
     ui->centralwidget->setAttribute(Qt::WA_TranslucentBackground);
     ui->centralwidget->setAutoFillBackground(false);
     ui->centralwidget->setStyleSheet(QStringLiteral("background: transparent;"));
+
+    auto *trayMenu = new QMenu(this);
+    auto *showAction = new QAction(QStringLiteral("显示窗口"), this);
+    auto *quitAction = new QAction(QStringLiteral("退出"), this);
+    connect(showAction, &QAction::triggered, this, [this]() {
+        showNormal();
+        raise();
+        activateWindow();
+    });
+    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    trayMenu->addAction(showAction);
+    trayMenu->addSeparator();
+    trayMenu->addAction(quitAction);
+    m_trayIcon->setContextMenu(trayMenu);
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
+        if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+            if (isVisible()) {
+                hide();
+            } else {
+                showNormal();
+                raise();
+                activateWindow();
+            }
+        }
+    });
+    m_trayIcon->show();
+    hide();
+
     connect(ui->settingsButton, &QPushButton::clicked, this, [this]() {
         if (!settingsWindow) {
             settingsWindow = new SettingsWindow(autoPoweroff);
-            connect(settingsWindow, &SettingsWindow::backgroundChangeRequested, this, [this]() {
-                backgroundIndex = (backgroundIndex + 1) % backgroundResources.size();
-                update();
-            });
             connect(settingsWindow, &QObject::destroyed, this, [this]() {
                 settingsWindow = nullptr;
             });
@@ -66,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
         weatherWindow->activateWindow();
     });
     autoPoweroff->start();
-    weatherApi->fetchAnyangWeather();
+    weatherApi->startDailyFetchSchedule(QTime(21, 0));
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -76,7 +95,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     painter.fillRect(rect(), Qt::black);
 
-    QPixmap bgPixmap(backgroundResources.at(backgroundIndex));
+    const QPixmap bgPixmap(QStringLiteral(":/images/background-dark.png"));
     if (bgPixmap.isNull()) {
         return;
     }
@@ -94,6 +113,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    showMinimized();
-    event->ignore();
+    if (m_trayIcon && m_trayIcon->isSystemTrayAvailable()) {
+        hide();
+        event->ignore();
+        return;
+    }
+
+    QMainWindow::closeEvent(event);
 }

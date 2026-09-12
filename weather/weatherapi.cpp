@@ -1,6 +1,7 @@
 #include "weatherapi.h"
 
 #include <QCoreApplication>
+#include <QDate>
 #include <QDir>
 #include <QFile>
 #include <QDebug>
@@ -12,15 +13,40 @@
 #include <QNetworkRequest>
 #include <QProcessEnvironment>
 #include <QSaveFile>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 
 WeatherApi::WeatherApi(QObject *parent)
     : QObject(parent)
     , networkManager(new QNetworkAccessManager(this))
+    , dailyFetchTimer(new QTimer(this))
+    , fetchTime(21, 0)
+    , lastFetchDate()
     , apiKey(qEnvironmentVariable("QWEATHER_API_KEY",
                                   "678996b6ca2142af8944f8ec259af633"))
 {
+    dailyFetchTimer->setInterval(60000);
+    connect(dailyFetchTimer, &QTimer::timeout, this, &WeatherApi::checkDailyFetchSchedule);
+}
+
+void WeatherApi::startDailyFetchSchedule(const QTime &newFetchTime)
+{
+    fetchTime = newFetchTime.isValid() ? newFetchTime : QTime(21, 0);
+    dailyFetchTimer->start();
+}
+
+void WeatherApi::checkDailyFetchSchedule()
+{
+    const QDate today = QDate::currentDate();
+    const QTime now = QTime::currentTime();
+    if (lastFetchDate == today)
+        return;
+
+    if (now >= fetchTime && now < fetchTime.addSecs(60)) {
+        lastFetchDate = today;
+        fetchAnyangWeather();
+    }
 }
 
 void WeatherApi::setApiKey(const QString &newApiKey)
