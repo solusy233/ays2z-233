@@ -39,7 +39,6 @@ private:
 	void checkSchedule();
 	void loadStartTime();
 	void saveStartTime() const;
-	void updateSchoolDays();
 	void startPlaylist();
 	void playNextTrack();
 	QStringList loadPlaylist();

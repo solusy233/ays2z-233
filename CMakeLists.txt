@@ -24,10 +24,12 @@ set(PROJECT_SOURCES
         Auto_poweroff233/Auto_poweroff.h
         weather/weatherapi.cpp
         weather/weatherapi.h
+        weather/weather_background.cpp
+        weather/weather_background.h
         weather/weatherwindow.cpp
         weather/weatherwindow.h
         weather/weatherwindow.ui
-        app_icon.rc
+        aboutwindows/mainwindows/app_icon.rc
         resources.qrc
 )
 
@@ -70,6 +72,9 @@ add_custom_command(TARGET untitled POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/weather/picture"
             "$<TARGET_FILE_DIR:untitled>/weather/picture"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/Fout"
+            "$<TARGET_FILE_DIR:untitled>/Fout"
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

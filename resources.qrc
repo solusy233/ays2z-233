@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/images">
-    <file alias="background-dark.png">05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
-    <file alias="background-light.png">05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
-    <file alias="tray-icon.jpg">anys2z.jpg</file>
+    <file alias="background-dark.png">aboutwindows/mainwindows/05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
+    <file alias="background-light.png">aboutwindows/mainwindows/05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
+    <file alias="tray-icon.jpg">aboutwindows/mainwindows/anys2z.jpg</file>
 </qresource>
 </RCC>

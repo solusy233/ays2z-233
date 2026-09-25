@@ -1,6 +1,9 @@
 #ifndef WEATHERWINDOW_H
 #define WEATHERWINDOW_H
 
+#include <QFrame>
+#include <QLabel>
+#include <QPushButton>
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -19,8 +22,13 @@ public:
 
 private:
     void loadTemperatureSummary();
+    void applyWeatherBackground(int conditionCode);
+    void updatePanelLayout();
 
     Ui::WeatherWindow *ui;
+    QFrame *glassPanel = nullptr;
+    QLabel *titleLabel = nullptr;
+    QPushButton *closeButton = nullptr;
 };
 
 #endif // WEATHERWINDOW_H

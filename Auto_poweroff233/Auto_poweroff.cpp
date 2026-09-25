@@ -17,7 +17,6 @@ AutoPoweroff::AutoPoweroff(QObject *parent)
 	, startTime(22, 0)
 {
 	loadStartTime();
-	updateSchoolDays();
 	timer->setInterval(1000);
 	connect(timer, &QTimer::timeout, this, &AutoPoweroff::checkSchedule);
 	connect(player, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus status) {
@@ -83,39 +82,6 @@ void AutoPoweroff::saveStartTime() const
 		return;
 
 	const QJsonObject object{{QStringLiteral("startTime"), startTime.toString(QStringLiteral("HH:mm"))}};
-	file.write(QJsonDocument(object).toJson(QJsonDocument::Indented));
-}
-
-void AutoPoweroff::updateSchoolDays()
-{
-	const QString settingsFilePath = QCoreApplication::applicationDirPath()
-		+ QStringLiteral("/settings.json");
-	QFile file(settingsFilePath);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		return;
-
-	QJsonParseError parseError;
-	QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
-	file.close();
-	if (parseError.error != QJsonParseError::NoError || !document.isObject())
-		return;
-
-	QJsonObject object = document.object();
-	const QDateTime now = QDateTime::currentDateTime();
-	const QDateTime previous = QDateTime::fromString(
-		object.value(QStringLiteral("CurrentDay")).toString(), Qt::ISODate);
-	int schoolDays = object.value(QStringLiteral("schoolDays")).toString().toInt();
-	const qint64 elapsedSeconds = previous.isValid() ? previous.secsTo(now) : -1;
-	if (elapsedSeconds >= 0 && elapsedSeconds < 12 * 60 * 60)
-		++schoolDays;
-	else
-		schoolDays = 0;
-
-	object.insert(QStringLiteral("CurrentDay"), now.toString(Qt::ISODate));
-	object.insert(QStringLiteral("schoolDays"), QString::number(schoolDays));
-	file.setFileName(settingsFilePath);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
-		return;
 	file.write(QJsonDocument(object).toJson(QJsonDocument::Indented));
 }
 

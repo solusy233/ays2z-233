@@ -36,15 +36,25 @@ void WeatherApi::startDailyFetchSchedule(const QTime &newFetchTime)
     dailyFetchTimer->start();
 }
 
+/**
+ * @brief 检查每日天气数据获取的定时任务
+ * 该函数用于检查当前时间是否到达预设的天气数据获取时间
+ * 如果到达时间且当天尚未获取数据，则触发数据获取
+ */
 void WeatherApi::checkDailyFetchSchedule()
 {
+    // 获取当前日期和时间
     const QDate today = QDate::currentDate();
     const QTime now = QTime::currentTime();
+    // 如果已经获取过今天的数据，则直接返回
     if (lastFetchDate == today)
         return;
 
+    // 检查当前时间是否在获取时间前后一秒内
     if (now >= fetchTime && now < fetchTime.addSecs(60)) {
+        // 更新最后获取日期为今天
         lastFetchDate = today;
+        // 获取安阳天气数据
         fetchAnyangWeather();
     }
 }
