@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-    <string>天气预报</string>
+   <string>天气预报2333333333</string>
   </property>
   <widget class="QPlainTextEdit" name="weatherText">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
+     <x>360</x>
+     <y>40</y>
      <width>680</width>
      <height>430</height>
     </rect>

@@ -20,14 +20,20 @@ public:
     explicit WeatherWindow(QWidget *parent = nullptr);
     ~WeatherWindow();
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
 private:
     void loadTemperatureSummary();
     void applyWeatherBackground(int conditionCode);
     void updatePanelLayout();
+    void updateWeatherIcon(int conditionCode);
 
     Ui::WeatherWindow *ui;
+    QPixmap backgroundPixmap;
     QFrame *glassPanel = nullptr;
     QLabel *titleLabel = nullptr;
+    QLabel *weatherIconLabel = nullptr;
     QPushButton *closeButton = nullptr;
 };
 

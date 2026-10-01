@@ -1,14 +1,18 @@
 #include "settingswindow.h"
 #include "ui_settingswindow.h"
 #include "../../Auto_poweroff233/Auto_poweroff.h"
+#include "../../booth/booth.h"
+#include "../../weather/weatherapi.h"
 #include "../../weather/weatherwindow.h"
 #include <QCoreApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPainter>
 
 namespace {
 QString settingsJsonPath()
@@ -48,12 +52,15 @@ void writePasswordToJson(const QString &password)
 
     file.write(QJsonDocument(object).toJson(QJsonDocument::Indented));
 }
+
 }
 
-SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent)
+SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, Booth *booth, WeatherApi *weatherApi,
+                               QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SettingsWindow)
     , weatherWindow(nullptr)
+    , backgroundPixmap(QStringLiteral(":/images/settings-background.png"))
 {
     ui->setupUi(this);
     setFixedSize(size());
@@ -84,7 +91,8 @@ SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent)
         ui->statusbar->showMessage(status);
     });
     connect(ui->cancelShutdownButton, &QPushButton::clicked, autoPoweroff, &AutoPoweroff::cancelShutdown);
-    connect(ui->openWeatherButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->openWeatherButton, &QPushButton::clicked, this, [this, weatherApi]() {
+        weatherApi->fetchAnyangWeather();
         if (!weatherWindow) {
             weatherWindow = new WeatherWindow();
             connect(weatherWindow, &QObject::destroyed, this, [this]() {
@@ -94,6 +102,12 @@ SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent)
         weatherWindow->show();
         weatherWindow->raise();
         weatherWindow->activateWindow();
+    });
+    connect(ui->selectExeButton, &QPushButton::clicked, this, [this, booth]() {
+        booth->selectAndStartExe(this);
+    });
+    connect(booth, &Booth::statusMessage, this, [this](const QString &message) {
+        ui->statusbar->showMessage(message);
     });
     connect(ui->exitButton, &QPushButton::clicked, []() {
         QCoreApplication::quit();
@@ -105,4 +119,21 @@ SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent)
 SettingsWindow::~SettingsWindow()
 {
     delete ui;
+}
+
+void SettingsWindow::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    QPainter painter(this);
+    painter.fillRect(rect(), Qt::black);
+
+    if (backgroundPixmap.isNull())
+        return;
+
+    const QPixmap scaledBackground = backgroundPixmap.scaled(
+        size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const QRect targetRect((width() - scaledBackground.width()) / 2,
+                           (height() - scaledBackground.height()) / 2,
+                           scaledBackground.width(), scaledBackground.height());
+    painter.drawPixmap(targetRect, scaledBackground);
 }

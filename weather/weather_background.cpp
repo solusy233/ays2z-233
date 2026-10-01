@@ -14,6 +14,7 @@ QString WeatherBackground::categoryForWeatherCode(int conditionCode)
         return QStringLiteral("rainy");
     if (conditionCode >= 400 && conditionCode < 500)
         return QStringLiteral("snow");
+        
     return QStringLiteral("sunny");
 }
 

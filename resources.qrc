@@ -2,6 +2,10 @@
 <qresource prefix="/images">
     <file alias="background-dark.png">aboutwindows/mainwindows/05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
     <file alias="background-light.png">aboutwindows/mainwindows/05e55233-b0d3-43b9-ac52-dcbfed013c5b.png</file>
+    <file alias="settings-background.png">aboutwindows/settings/settings 01.png</file>
     <file alias="tray-icon.jpg">aboutwindows/mainwindows/anys2z.jpg</file>
+</qresource>
+<qresource prefix="/fonts">
+    <file alias="HarmonyOS_Sans_Regular.ttf">Fout/HarmonyOS_Sans_Regular.ttf</file>
 </qresource>
 </RCC>

@@ -5,7 +5,7 @@
             "name": "运行 Qt 项目",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug\\untitled.exe",
+            "program": "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug\\SchoolPoweroff.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}\\build\\Desktop_Qt_6_9_1_MinGW_64_bit-Debug",

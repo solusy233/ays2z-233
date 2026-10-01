@@ -6,6 +6,7 @@
 
 class QCloseEvent;
 class AutoPoweroff;
+class Booth;
 class WeatherApi;
 class WeatherWindow;
 class SettingsWindow;
@@ -27,6 +28,7 @@ public:
 private:
     Ui::MainWindow *ui;
     AutoPoweroff *autoPoweroff;
+    Booth *booth;
     WeatherApi *weatherApi;
     WeatherWindow *weatherWindow;
     SettingsWindow *settingsWindow;

@@ -7,11 +7,22 @@
 
 int main(int argc, char *argv[])
 {
+    // 允许启用高 DPI 自动缩放
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // 使用高 DPI 属性（例如图标选择正确的 DPR）
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    
+    // 设置非整数缩放策略（解决 125%、150% 缩放下的字体/边框错位）
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough
+    );
+
     QApplication a(argc, argv);
+    
     a.setQuitOnLastWindowClosed(false);
 
     // 1. 加载资源文件中的字体
-    int fontId = QFontDatabase::addApplicationFont(":/fonts/HarmonyOS_Sans_SC.ttf");
+    int fontId = QFontDatabase::addApplicationFont(":/fonts/HarmonyOS_Sans_Regular.ttf");
     
     if (fontId == -1) {
         qWarning() << "字体加载失败，请检查 qrc 路径是否正确！";

@@ -1,4 +1,9 @@
 {
+    "averageTemperature": 21.5,
+    "exePath": "E:/WX visualizer/WxProjector.exe",
+    "password": "1",
+    "showWeatherSvg": true,
     "startTime": "23:00",
-    "password": "1"
+    "weatherSvgDirectory": "weather/icons",
+    "weatherUpdateTime": "2026-09-24T21:04+08:00"
 }

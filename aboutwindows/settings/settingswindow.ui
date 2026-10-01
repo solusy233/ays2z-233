@@ -7,20 +7,34 @@
     <x>0</x>
     <y>0</y>
     <width>1287</width>
-    <height>630</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>设置</string>
   </property>
+  <property name="styleSheet">
+    <string notr="true">QLabel#startTimeLabel { color: #f3d68a; background: transparent; }
+QTimeEdit { color: #fff4d0; background-color: rgba(4, 28, 62, 220); border: 2px solid #d7b56d; border-radius: 4px; selection-background-color: #2875ad; }
+QCheckBox { color: #fff4d0; background: transparent; spacing: 8px; }
+QPushButton { color: #fff4d0; background-color: rgba(4, 43, 91, 225); border: 2px solid #d7b56d; border-radius: 5px; padding: 4px 8px; }
+QPushButton:hover { background-color: rgba(24, 91, 151, 240); }
+QPushButton:pressed { color: #09264b; background-color: #e2bd69; }
+QStatusBar { color: #fff4d0; background-color: rgba(4, 28, 62, 190); border-top: 1px solid #d7b56d; }</string>
+  </property>
   <widget class="QLabel" name="startTimeLabel">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>190</y>
-     <width>100</width>
-     <height>25</height>
+      <x>38</x>
+      <y>183</y>
+      <width>102</width>
+      <height>40</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>15</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>播放时间：</string>
@@ -29,11 +43,16 @@
   <widget class="QTimeEdit" name="startTimeEdit">
    <property name="geometry">
     <rect>
-     <x>1150</x>
-     <y>190</y>
-     <width>100</width>
-     <height>25</height>
+    <x>142</x>
+    <y>177</y>
+    <width>140</width>
+    <height>52</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>21</pointsize>
+    </font>
    </property>
    <property name="displayFormat">
     <string>HH:mm</string>
@@ -49,11 +68,16 @@
   <widget class="QPushButton" name="cancelShutdownButton">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>220</y>
-     <width>160</width>
-     <height>30</height>
+    <x>42</x>
+    <y>429</y>
+    <width>235</width>
+    <height>50</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>17</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>取消待执行关机</string>
@@ -62,11 +86,16 @@
   <widget class="QCheckBox" name="autoStartCheckBox">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>280</y>
-     <width>180</width>
-     <height>25</height>
+    <x>42</x>
+    <y>241</y>
+    <width>235</width>
+    <height>48</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>17</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>开机自动启动</string>
@@ -75,34 +104,62 @@
   <widget class="QPushButton" name="exitButton">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>310</y>
-     <width>160</width>
-     <height>30</height>
+    <x>42</x>
+    <y>491</y>
+    <width>235</width>
+    <height>50</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>17</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>退出程序</string>
    </property>
   </widget>
-   <widget class="QPushButton" name="openWeatherButton">
-    <property name="geometry">
-      <rect>
-       <x>1090</x>
-       <y>390</y>
-       <width>160</width>
-       <height>30</height>
-      </rect>
-    </property>
-    <property name="text">
-      <string>打开天气窗口</string>
-    </property>
-   </widget>
+  <widget class="QPushButton" name="openWeatherButton">
+   <property name="geometry">
+    <rect>
+    <x>42</x>
+    <y>367</y>
+    <width>235</width>
+    <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>17</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>打开天气窗口</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="selectExeButton">
+   <property name="geometry">
+    <rect>
+    <x>42</x>
+    <y>303</y>
+    <width>235</width>
+    <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+    <pointsize>17</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>选择并启动程序</string>
+   </property>
+  </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>609</y>
+    <y>699</y>
      <width>1287</width>
      <height>21</height>
     </rect>
@@ -111,4 +168,4 @@
  </widget>
  <resources/>
  <connections/>
- </ui>
+</ui>
