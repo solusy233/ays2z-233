@@ -16,11 +16,16 @@
   <widget class="QLabel" name="startTimeLabel">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>190</y>
-     <width>100</width>
-     <height>25</height>
+     <x>100</x>
+     <y>150</y>
+     <width>111</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>播放时间：</string>
@@ -29,11 +34,16 @@
   <widget class="QTimeEdit" name="startTimeEdit">
    <property name="geometry">
     <rect>
-     <x>1150</x>
-     <y>190</y>
-     <width>100</width>
-     <height>25</height>
+     <x>210</x>
+     <y>130</y>
+     <width>211</width>
+     <height>81</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>28</pointsize>
+    </font>
    </property>
    <property name="displayFormat">
     <string>HH:mm</string>
@@ -49,11 +59,16 @@
   <widget class="QPushButton" name="cancelShutdownButton">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>220</y>
-     <width>160</width>
-     <height>30</height>
+     <x>100</x>
+     <y>450</y>
+     <width>271</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>22</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>取消待执行关机</string>
@@ -62,11 +77,16 @@
   <widget class="QCheckBox" name="autoStartCheckBox">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>280</y>
-     <width>180</width>
-     <height>25</height>
+     <x>100</x>
+     <y>230</y>
+     <width>271</width>
+     <height>71</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>22</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>开机自动启动</string>
@@ -75,29 +95,57 @@
   <widget class="QPushButton" name="exitButton">
    <property name="geometry">
     <rect>
-     <x>1090</x>
-     <y>310</y>
-     <width>160</width>
-     <height>30</height>
+     <x>100</x>
+     <y>510</y>
+     <width>271</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>22</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>退出程序</string>
    </property>
   </widget>
-   <widget class="QPushButton" name="openWeatherButton">
-    <property name="geometry">
-      <rect>
-       <x>1090</x>
-       <y>390</y>
-       <width>160</width>
-       <height>30</height>
-      </rect>
-    </property>
-    <property name="text">
-      <string>打开天气窗口</string>
-    </property>
-   </widget>
+  <widget class="QPushButton" name="openWeatherButton">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>380</y>
+     <width>271</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>22</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>打开天气窗口</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="selectExeButton">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>300</y>
+     <width>271</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>22</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>选择并启动程序</string>
+   </property>
+  </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="geometry">
     <rect>
@@ -111,4 +159,4 @@
  </widget>
  <resources/>
  <connections/>
- </ui>
+</ui>

@@ -1,6 +1,7 @@
 #include "Auto_poweroff.h"
 
 #include <algorithm>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -216,9 +217,61 @@ QStringList AutoPoweroff::loadPlaylist()
 	return tracks;
 }
 
+
+/**
+ * @brief 安排计算机关机
+ * 此函数会先停止播放器，然后执行系统关机命令
+ */
 void AutoPoweroff::scheduleShutdown()
 {
+    const QString weatherPath = QCoreApplication::applicationDirPath()
+		+ QStringLiteral("/weather/picture/weather.json");
+	QFile weatherFile(weatherPath);
+	if (weatherFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		const QJsonDocument weatherDocument = QJsonDocument::fromJson(weatherFile.readAll());
+		const QJsonObject weather = weatherDocument.object();
+		const QJsonArray daily = weather.value(QStringLiteral("daily")).toArray();
+		bool averageTemperatureOk = false;
+		double averageTemperature = 0.0;
+		if (!daily.isEmpty()) {
+			const QJsonObject today = daily.first().toObject();
+			bool maximumOk = false;
+			bool minimumOk = false;
+			const double maximum = today.value(QStringLiteral("tempMax")).toString().toDouble(&maximumOk);
+			const double minimum = today.value(QStringLiteral("tempMin")).toString().toDouble(&minimumOk);
+			if (maximumOk && minimumOk) {
+				averageTemperature = (maximum + minimum) / 2.0;
+				averageTemperatureOk = true;
+			}
+		}
+
+		const QString weatherUpdateTime = weather.value(QStringLiteral("updateTime")).toString();
+		if (averageTemperatureOk || !weatherUpdateTime.isEmpty()) {
+			const QString settingsPath = QCoreApplication::applicationDirPath()
+				+ QStringLiteral("/settings.json");
+			QJsonObject settings;
+			QFile settingsFile(settingsPath);
+			if (settingsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+				const QJsonDocument settingsDocument = QJsonDocument::fromJson(settingsFile.readAll());
+				if (settingsDocument.isObject())
+					settings = settingsDocument.object();
+				settingsFile.close();
+			}
+			if (averageTemperatureOk)
+				settings.insert(QStringLiteral("averageTemperature"), averageTemperature);
+			if (!weatherUpdateTime.isEmpty())
+				settings.insert(QStringLiteral("weatherUpdateTime"), weatherUpdateTime);
+			if (settingsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+				settingsFile.write(QJsonDocument(settings).toJson(QJsonDocument::Indented));
+		}
+	}
+
+    // 停止播放器
 	player->stop();
+    // 使用QProcess启动系统关机命令
+    // /s 表示关机，/t 0 表示立即执行
 	QProcess::startDetached(QStringLiteral("shutdown"), {QStringLiteral("/s"), QStringLiteral("/t"), QStringLiteral("0")});
+;
+    // 发射状态改变信号，通知界面已执行关机命令
 	emit statusChanged(QStringLiteral("已执行关机命令"));
 }

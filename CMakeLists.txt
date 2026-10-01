@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project("安阳市第二中学放学关机" VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/mingw_64" ${CMAKE_PREFIX_PATH})
+set(Qt6_DIR "C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6")
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -14,6 +17,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia Networ
 
 set(PROJECT_SOURCES
         main.cpp
+        booth/booth.cpp
+        booth/booth.h
         aboutwindows/mainwindows/mainwindow.cpp
         aboutwindows/mainwindows/mainwindow.h
         aboutwindows/mainwindows/mainwindow.ui
@@ -66,9 +71,15 @@ add_custom_command(TARGET untitled POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/Auto_poweroff233"
             "$<TARGET_FILE_DIR:untitled>/Auto_poweroff233"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/settings.json"
-            "$<TARGET_FILE_DIR:untitled>/settings.json"
+        COMMAND ${CMAKE_COMMAND}
+            -DSETTINGS_SOURCE="${CMAKE_CURRENT_SOURCE_DIR}/settings.json"
+            -DSETTINGS_DESTINATION="$<TARGET_FILE_DIR:untitled>/settings.json"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CopySettingsIfMissing.cmake"
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "$<TARGET_FILE_DIR:untitled>/booth"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/booth/booth.m4a"
+            "$<TARGET_FILE_DIR:untitled>/booth/booth.m4a"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/weather/picture"
             "$<TARGET_FILE_DIR:untitled>/weather/picture"

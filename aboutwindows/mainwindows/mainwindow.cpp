@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "../../Auto_poweroff233/Auto_poweroff.h"
+#include "../../booth/booth.h"
 #include "../settings/settingswindow.h"
 #include "../../weather/weatherapi.h"
 #include "../../weather/weatherwindow.h"
@@ -14,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , autoPoweroff(new AutoPoweroff(this))
+    , booth(new Booth(this))
     , weatherApi(new WeatherApi(this))
     , weatherWindow(nullptr)
     , settingsWindow(nullptr)
@@ -60,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->settingsButton, &QPushButton::clicked, this, [this]() {
         if (!settingsWindow) {
-            settingsWindow = new SettingsWindow(autoPoweroff);
+            settingsWindow = new SettingsWindow(autoPoweroff, booth, weatherApi);
             connect(settingsWindow, &QObject::destroyed, this, [this]() {
                 settingsWindow = nullptr;
             });

@@ -4,6 +4,8 @@
 #include <QWidget>
 
 class AutoPoweroff;
+class Booth;
+class WeatherApi;
 class WeatherWindow;
 
 QT_BEGIN_NAMESPACE
@@ -17,7 +19,8 @@ class SettingsWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(AutoPoweroff *autoPoweroff, QWidget *parent = nullptr);
+    explicit SettingsWindow(AutoPoweroff *autoPoweroff, Booth *booth, WeatherApi *weatherApi,
+                            QWidget *parent = nullptr);
     ~SettingsWindow();
 
 private:

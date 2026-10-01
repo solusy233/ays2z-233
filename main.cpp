@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 
     // 1. 加载资源文件中的字体
-    int fontId = QFontDatabase::addApplicationFont(":/fonts/HarmonyOS_Sans_SC.ttf");
+    int fontId = QFontDatabase::addApplicationFont(":/fonts/HarmonyOS_Sans_Regular.ttf");
     
     if (fontId == -1) {
         qWarning() << "字体加载失败，请检查 qrc 路径是否正确！";

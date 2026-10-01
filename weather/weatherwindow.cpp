@@ -17,6 +17,8 @@
 #include <QJsonParseError>
 #include <QLabel>
 #include <QPalette>
+#include <QPainter>
+#include <QPaintEvent>
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -25,6 +27,19 @@
 #include <QTextCursor>
 
 namespace {
+QRect fittedBackgroundRect(const QPixmap &pixmap, const QSize &size)
+{
+    if (pixmap.isNull() || size.isEmpty())
+        return QRect();
+
+    QSize scaledSize = pixmap.size();
+    scaledSize.scale(size, Qt::KeepAspectRatio);
+    return QRect((size.width() - scaledSize.width()) / 2,
+                 (size.height() - scaledSize.height()) / 2,
+                 scaledSize.width(),
+                 scaledSize.height());
+}
+
 bool loadFontFamilyFromFile(const QString &fontPath, QString *familyName)
 {
     if (!QFileInfo::exists(fontPath))
@@ -76,7 +91,7 @@ void applyCustomWeatherFont(QLabel *titleLabel, QPushButton *closeButton, QPlain
         textFormat.setFontPointSize(34);
         cursor.setCharFormat(textFormat);
 
-        QString blackPath = QStringLiteral("D:/xiangmu/untitled/Fout/HarmonyOS_Sans_Black.ttf");
+        QString blackPath = QStringLiteral("Fout/HarmonyOS_Sans_Black.ttf");
         QString blackFamily;
         if (loadFontFamilyFromFile(blackPath, &blackFamily)) {
             QTextCharFormat numberFormat;
@@ -98,23 +113,29 @@ void applyCustomWeatherFont(QLabel *titleLabel, QPushButton *closeButton, QPlain
 
 void WeatherWindow::applyWeatherBackground(int conditionCode)
 {
-    const QPixmap backgroundPixmap = WeatherBackground::randomBackgroundForWeatherCode(
+    backgroundPixmap = WeatherBackground::randomBackgroundForWeatherCode(
         conditionCode, QCoreApplication::applicationDirPath());
     if (backgroundPixmap.isNull())
         return;
 
-    resize(backgroundPixmap.size());
+    setAttribute(Qt::WA_TranslucentBackground);
     if (QScreen *screen = QGuiApplication::primaryScreen()) {
-        const QRect availableGeometry = screen->availableGeometry();
-        move(availableGeometry.center() - rect().center());
+        setGeometry(screen->geometry());
     }
 
-    QPalette windowPalette = palette();
-    windowPalette.setBrush(QPalette::Window, QBrush(backgroundPixmap));
-    setAutoFillBackground(true);
-    setPalette(windowPalette);
-
+    update();
     updatePanelLayout();
+}
+
+void WeatherWindow::paintEvent(QPaintEvent *)
+{
+    const QRect targetRect = fittedBackgroundRect(backgroundPixmap, size());
+    if (targetRect.isEmpty())
+        return;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawPixmap(targetRect, backgroundPixmap);
 }
 
 void WeatherWindow::updatePanelLayout()
@@ -135,10 +156,13 @@ void WeatherWindow::updatePanelLayout()
         glassPanel->lower();
     }
 
-    const int panelWidth = qMax(420, qMin(width() / 3, 620));
-    const int panelHeight = qMax(360, qMin(height() - 100, 760));
-    const QRect panelGeometry(width() - panelWidth - 80,
-                              (height() - panelHeight) / 2,
+    const QRect backgroundRect = fittedBackgroundRect(backgroundPixmap, size());
+    const int panelWidth = qMin(backgroundRect.width() - 48,
+                                qMax(420, qMin(backgroundRect.width() / 3, 620)));
+    const int panelHeight = qMin(backgroundRect.height() - 48,
+                                 qMax(360, qMin(backgroundRect.height() - 100, 760)));
+    const QRect panelGeometry(backgroundRect.x() + backgroundRect.width() - panelWidth - 40,
+                              backgroundRect.y() + (backgroundRect.height() - panelHeight) / 2,
                               panelWidth,
                               panelHeight);
     glassPanel->setGeometry(panelGeometry);
