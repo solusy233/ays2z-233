@@ -34,6 +34,7 @@ private:
     QFrame *glassPanel = nullptr;
     QLabel *titleLabel = nullptr;
     QLabel *weatherIconLabel = nullptr;
+    QLabel *weatherTipLabel = nullptr;
     QPushButton *closeButton = nullptr;
 };
 

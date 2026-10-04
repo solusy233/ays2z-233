@@ -38,5 +38,8 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
+    w.showNormal();
+    w.raise();
+    w.activateWindow();
     return a.exec();
 }

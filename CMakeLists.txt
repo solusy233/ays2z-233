@@ -27,8 +27,10 @@ set(PROJECT_SOURCES
         Auto_poweroff233/Auto_poweroff.h
         weather/weatherapi.cpp
         weather/weatherapi.h
-        weather/weather_background.cpp
-        weather/weather_background.h
+        weather/weather_schedule.cpp
+        weather/weather_schedule.h
+        weather/weather_judge.cpp
+        weather/weather_judge.h
         weather/weatherwindow.cpp
         weather/weatherwindow.h
         weather/weatherwindow.ui
@@ -79,6 +81,13 @@ add_custom_command(TARGET SchoolPoweroff POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/weather/picture"
             "$<TARGET_FILE_DIR:SchoolPoweroff>/weather/picture"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/weather/tips_sound"
+            "$<TARGET_FILE_DIR:SchoolPoweroff>/weather/tips_sound"
+        COMMAND ${CMAKE_COMMAND}
+            -DSETTINGS_SOURCE="${CMAKE_CURRENT_SOURCE_DIR}/weather/weather.json"
+            -DSETTINGS_DESTINATION="$<TARGET_FILE_DIR:SchoolPoweroff>/weather/weather.json"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CopySettingsIfMissing.cmake"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/Fout"
             "$<TARGET_FILE_DIR:SchoolPoweroff>/Fout"

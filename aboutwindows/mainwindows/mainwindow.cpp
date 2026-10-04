@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     , weatherApi(new WeatherApi(this))
     , weatherWindow(nullptr)
     , settingsWindow(nullptr)
-    , m_trayIcon(new QSystemTrayIcon(QIcon(QStringLiteral(":/images/tray-icon.jpg")), this))
+    , m_trayIcon(new QSystemTrayIcon(QIcon(QStringLiteral(":/images/tray-icon.png")), this))
 {
     ui->setupUi(this);
     setFixedSize(size());
@@ -37,29 +37,18 @@ MainWindow::MainWindow(QWidget *parent)
     auto *showAction = new QAction(QStringLiteral("显示窗口"), this);
     auto *quitAction = new QAction(QStringLiteral("退出"), this);
     connect(showAction, &QAction::triggered, this, [this]() {
-        showNormal();
-        raise();
-        activateWindow();
+        showMainWindow();
     });
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
     trayMenu->addAction(showAction);
     trayMenu->addSeparator();
     trayMenu->addAction(quitAction);
     m_trayIcon->setContextMenu(trayMenu);
-    connect(m_trayIcon, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
-        if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
-            if (isVisible()) {
-                hide();
-            } else {
-                showNormal();
-                raise();
-                activateWindow();
-            }
-        }
-    });
-    m_trayIcon->show();
-    hide();
+    m_trayIcon->setToolTip(QStringLiteral("安阳二中定时关机"));
 
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        m_trayIcon->show();
+    }
     connect(ui->settingsButton, &QPushButton::clicked, this, [this]() {
         if (!settingsWindow) {
             settingsWindow = new SettingsWindow(autoPoweroff, booth, weatherApi);
@@ -87,7 +76,15 @@ MainWindow::MainWindow(QWidget *parent)
         weatherWindow->activateWindow();
     });
     autoPoweroff->start();
-    weatherApi->startDailyFetchSchedule(QTime(21, 0));
+    // 抓取时刻取 settings.json 的 startTime 前 3 分钟（默认参数即自动读取）
+    weatherApi->startDailyFetchSchedule();
+}
+
+void MainWindow::showMainWindow()
+{
+    showNormal();
+    raise();
+    activateWindow();
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -115,11 +112,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (m_trayIcon && m_trayIcon->isSystemTrayAvailable()) {
-        hide();
-        event->ignore();
-        return;
-    }
+    // 关窗口不退出程序：到点流程（提示音/音乐/关机）必须继续跑。
+    // 这里统一最小化到任务栏——任务栏按钮在任何机器上都能把窗口叫回来；
+    // 托盘图标若可用，双击图标同样能显示/隐藏窗口。要真正退出请用设置界面里的“退出”。
+    showMinimized();
+    event->ignore();
 
-    QMainWindow::closeEvent(event);
+    if (m_trayIcon && m_trayIcon->isSystemTrayAvailable()) {
+        m_trayIcon->showMessage(QStringLiteral("窗口已最小化到任务栏"),
+                                QStringLiteral("双击系统托盘图标也能显示/隐藏窗口；退出请打开设置界面点“退出”。"),
+                                QSystemTrayIcon::Information,
+                                5000);
+    }
 }

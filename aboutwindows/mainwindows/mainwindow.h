@@ -26,6 +26,9 @@ public:
     ~MainWindow();
 
 private:
+    /// 从托盘/菜单显示主窗口（置顶并激活）
+    void showMainWindow();
+
     Ui::MainWindow *ui;
     AutoPoweroff *autoPoweroff;
     Booth *booth;

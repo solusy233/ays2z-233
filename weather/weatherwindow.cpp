@@ -1,5 +1,5 @@
 #include "weatherwindow.h"
-#include "weather_background.h"
+#include "weather_judge.h"
 #include "ui_weatherwindow.h"
 
 #include <QCoreApplication>
@@ -192,7 +192,7 @@ void WeatherWindow::updateWeatherIcon(int conditionCode)
 
 void WeatherWindow::applyWeatherBackground(int conditionCode)
 {
-    backgroundPixmap = WeatherBackground::randomBackgroundForWeatherCode(
+    backgroundPixmap = WeatherJudge::randomBackgroundForWeatherCode(
         conditionCode, QCoreApplication::applicationDirPath());
     if (backgroundPixmap.isNull())
         return;
@@ -278,6 +278,16 @@ void WeatherWindow::updatePanelLayout()
     // 设置标题标签的位置和大小
     titleLabel->setGeometry(contentX, panelGeometry.y() + 26, contentWidth - 56, 42);
 
+    if (!weatherTipLabel) {
+        weatherTipLabel = new QLabel(this);
+        weatherTipLabel->setAlignment(Qt::AlignCenter);
+        weatherTipLabel->setWordWrap(true);
+        weatherTipLabel->setStyleSheet(QStringLiteral(
+            "QLabel { color: rgba(30, 55, 75, 245); background: rgba(255, 255, 255, 150); "
+            "border: 1px solid rgba(255, 255, 255, 210); border-radius: 16px; "
+            "padding: 8px 14px; font-size: 36px; font-weight: 600; }"));
+    }
+
     // 如果关闭按钮不存在，则创建关闭按钮
     if (!closeButton) {
         closeButton = new QPushButton(QStringLiteral("×"), this);
@@ -301,6 +311,10 @@ void WeatherWindow::updatePanelLayout()
     // 设置天气文本区域的位置和大小
     ui->weatherText->setGeometry(contentX, panelGeometry.y() + 86,
                                  contentWidth, panelGeometry.height() - 122);
+    weatherTipLabel->setGeometry(panelGeometry.x(),
+                                  qMax(12, panelGeometry.y() - 126),
+                                  panelGeometry.width(),
+                                  112);
     if (weatherIconLabel && ui && ui->weatherText) {
         const QRect textRect = ui->weatherText->geometry();
         weatherIconLabel->setGeometry(textRect.right() - 100,
@@ -421,10 +435,17 @@ void WeatherWindow::loadTemperatureSummary()
     const QString weatherCondition = tomorrow.value(QStringLiteral("textDay")).toString(
         tomorrow.value(QStringLiteral("textNight")).toString());
     // 构建天气摘要信息字符串
-    const QString summary = QStringLiteral(
+    QString summary = QStringLiteral(
         "天气情况  %1\n\n温度      %2 - %3 °C\n\n风向      %4\n\n风力      %5 级\n\n风速      %6 km/h")
                                 .arg(weatherCondition, minimum, maximum,
                                      windDirection, windScale, windSpeed);
+    const QString weatherTip = WeatherJudge::randomTipForWeatherCode(
+        conditionCode, QCoreApplication::applicationDirPath());
+    if (weatherTipLabel) {
+        weatherTipLabel->setText(weatherTip);
+        weatherTipLabel->setVisible(!weatherTip.isEmpty());
+        weatherTipLabel->raise();
+    }
     // 将摘要信息显示在UI上
     ui->weatherText->setPlainText(summary);
     // 应用自定义天气字体到相关控件

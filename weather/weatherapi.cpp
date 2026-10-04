@@ -1,7 +1,9 @@
 #include "weatherapi.h"
+#include "weather_schedule.h"
 
 #include <QCoreApplication>
 #include <QDate>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QDebug>
@@ -21,8 +23,9 @@ WeatherApi::WeatherApi(QObject *parent)
     : QObject(parent)
     , networkManager(new QNetworkAccessManager(this))
     , dailyFetchTimer(new QTimer(this))
-    , fetchTime(21, 0)
-    , lastFetchDate()
+    , explicitStartTime()
+    , lastFetchCycleDate()
+    , fallbackWarned(false)
     , apiKey(qEnvironmentVariable("QWEATHER_API_KEY",
                                   "678996b6ca2142af8944f8ec259af633"))
 {
@@ -30,33 +33,53 @@ WeatherApi::WeatherApi(QObject *parent)
     connect(dailyFetchTimer, &QTimer::timeout, this, &WeatherApi::checkDailyFetchSchedule);
 }
 
-void WeatherApi::startDailyFetchSchedule(const QTime &newFetchTime)
+void WeatherApi::startDailyFetchSchedule(const QTime &newStartTime)
 {
-    fetchTime = newFetchTime.isValid() ? newFetchTime : QTime(21, 0);
+    explicitStartTime = newStartTime;
     dailyFetchTimer->start();
 }
 
+QString WeatherApi::settingsFilePath() const
+{
+    return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("settings.json"));
+}
+
 /**
- * @brief 检查每日天气数据获取的定时任务
- * 该函数用于检查当前时间是否到达预设的天气数据获取时间
- * 如果到达时间且当天尚未获取数据，则触发数据获取
+ * @brief 检查是否进入当天的天气抓取窗口
+ *
+ * 抓取窗口为"开始时间前 3 分钟 ~ 开始时间"，开始时间取自调用方指定值，未指定时
+ * 每分钟重新读一次 settings.json 的 "startTime"（改时间无需重启）。窗口内每分钟
+ * 都会判断一次，因此定时器抖动不会整天空过；窗口外（含启动时已过开始时间）
+ * 不补抓，与 AutoPoweroff"错过不补播"保持一致。
  */
 void WeatherApi::checkDailyFetchSchedule()
 {
-    // 获取当前日期和时间
-    const QDate today = QDate::currentDate();
-    const QTime now = QTime::currentTime();
-    // 如果已经获取过今天的数据，则直接返回
-    if (lastFetchDate == today)
+    QTime startTime = explicitStartTime;
+    if (!startTime.isValid()) {
+        startTime = WeatherSchedule::startTimeFromSettings(settingsFilePath());
+        if (!startTime.isValid()) {
+            startTime = WeatherSchedule::fallbackStartTime();
+            if (!fallbackWarned) {
+                fallbackWarned = true;
+                qWarning() << "settings.json 中没有可用的 startTime，天气抓取时刻回退到"
+                           << startTime.toString(QStringLiteral("HH:mm"));
+            }
+        }
+    }
+
+    const QDateTime scheduled = WeatherSchedule::fetchWindowScheduledAt(QDateTime::currentDateTime(), startTime);
+    if (!scheduled.isValid())
         return;
 
-    // 检查当前时间是否在获取时间前后一秒内
-    if (now >= fetchTime && now < fetchTime.addSecs(60)) {
-        // 更新最后获取日期为今天
-        lastFetchDate = today;
-        // 获取安阳天气数据
-        fetchAnyangWeather();
-    }
+    // 同一周期（同一次到点）只抓一次；到点那天就是周期日期，跨午夜的窗口不会重复抓取
+    const QDate cycleDate = scheduled.date();
+    if (lastFetchCycleDate == cycleDate)
+        return;
+
+    lastFetchCycleDate = cycleDate;
+    qWarning() << "进入天气抓取窗口（到点:" << scheduled.toString(QStringLiteral("yyyy-MM-dd HH:mm"))
+               << "，提前" << WeatherSchedule::kFetchLeadSeconds << "秒）";
+    fetchAnyangWeather();
 }
 
 void WeatherApi::setApiKey(const QString &newApiKey)
