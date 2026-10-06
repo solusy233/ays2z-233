@@ -7,11 +7,14 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
+#include <QFontDatabase>
 #include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPainter>
+#include <QPixmap>
 
 namespace {
 QString settingsJsonPath()
@@ -62,6 +65,24 @@ SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, Booth *booth, Weather
 {
     ui->setupUi(this);
     setFixedSize(size());
+    QString fontFamily = QStringLiteral("HarmonyOS Sans");
+    const int fontId = QFontDatabase::addApplicationFont(
+        QStringLiteral(":/fonts/HarmonyOS_Sans_Black.ttf"));
+    const QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
+    if (!fontFamilies.isEmpty())
+        fontFamily = fontFamilies.constFirst();
+    setStyleSheet(QStringLiteral(
+        "QWidget#SettingsWindow { background: transparent; }"
+        "QLabel { color: #f2d28c; background: transparent; font-family: '%1'; font-size: 12pt; }"
+        "QTimeEdit { color: #f2d28c; background: rgba(3, 34, 72, 220); border: 1px solid #e7bd65;"
+        " border-radius: 2px; padding: 1px 4px; font-family: '%1'; font-size: 19pt; }"
+        "QCheckBox { color: #f2d28c; background: transparent; font-family: '%1'; font-size: 12pt; }"
+        "QPushButton { color: #f2d28c; background: rgba(3, 34, 72, 205); border: 1px solid #e7bd65;"
+        " border-radius: 3px; padding: 2px 6px; font-family: '%1'; font-size: 12pt; }"
+        "QPushButton:hover { background: rgba(22, 66, 116, 230); }"
+        "QPushButton:pressed { background: rgba(2, 24, 54, 240); }"
+        "QStatusBar { color: #f2d28c; background: transparent; font-family: '%1'; font-size: 9pt; }"
+        "QStatusBar::item { border: none; }").arg(fontFamily));
     setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -117,4 +138,13 @@ SettingsWindow::SettingsWindow(AutoPoweroff *autoPoweroff, Booth *booth, Weather
 SettingsWindow::~SettingsWindow()
 {
     delete ui;
+}
+
+void SettingsWindow::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    QPainter painter(this);
+    const QPixmap background(QStringLiteral(":/images/settings-background.png"));
+    if (!background.isNull())
+        painter.drawPixmap(rect(), background);
 }

@@ -23,8 +23,7 @@ WeatherApi::WeatherApi(QObject *parent)
     , dailyFetchTimer(new QTimer(this))
     , fetchTime(21, 0)
     , lastFetchDate()
-    , apiKey(qEnvironmentVariable("QWEATHER_API_KEY",
-                                  "678996b6ca2142af8944f8ec259af633"))
+    , apiKey(qEnvironmentVariable("QWEATHER_API_KEY"))
 {
     dailyFetchTimer->setInterval(60000);
     connect(dailyFetchTimer, &QTimer::timeout, this, &WeatherApi::checkDailyFetchSchedule);
@@ -114,19 +113,58 @@ void WeatherApi::fetchAnyangWeather()
         }
 
         const QJsonArray daily = responseObject.value(QStringLiteral("daily")).toArray();
-        if (daily.size() < 2 || !daily.at(1).isObject()) {
+        if (daily.size() < 2 || !daily.first().isObject() || !daily.at(1).isObject()) {
             emit requestFailed(QStringLiteral("天气响应缺少明日预报数据"));
             reply->deleteLater();
             return;
         }
 
+        const QJsonObject today = daily.first().toObject();
         const QJsonObject tomorrow = daily.at(1).toObject();
+        QJsonArray temperatureHistory;
+        const QString weatherFilePath = QDir(QCoreApplication::applicationDirPath())
+                                            .filePath(QStringLiteral("weather/weather.json"));
+        QFile previousWeatherFile(weatherFilePath);
+        if (previousWeatherFile.open(QIODevice::ReadOnly)) {
+            const QJsonDocument previousDocument = QJsonDocument::fromJson(previousWeatherFile.readAll());
+            if (previousDocument.isObject()) {
+                temperatureHistory = previousDocument.object()
+                                         .value(QStringLiteral("temperatureHistory")).toArray();
+            }
+            previousWeatherFile.close();
+        }
+
+        const QDate todayDate = QDate::fromString(
+            today.value(QStringLiteral("fxDate")).toString(), Qt::ISODate);
+        bool maximumOk = false;
+        bool minimumOk = false;
+        const double todayMaximum = today.value(QStringLiteral("tempMax")).toString().toDouble(&maximumOk);
+        const double todayMinimum = today.value(QStringLiteral("tempMin")).toString().toDouble(&minimumOk);
+        if (todayDate.isValid() && maximumOk && minimumOk) {
+            QJsonArray updatedHistory;
+            for (const QJsonValue &entry : temperatureHistory) {
+                if (!entry.isObject())
+                    continue;
+                const QJsonObject historyEntry = entry.toObject();
+                const QDate entryDate = QDate::fromString(
+                    historyEntry.value(QStringLiteral("date")).toString(), Qt::ISODate);
+                if (entryDate >= todayDate.addDays(-7) && entryDate < todayDate)
+                    updatedHistory.append(historyEntry);
+            }
+
+            QJsonObject todayAverage;
+            todayAverage.insert(QStringLiteral("date"), todayDate.toString(Qt::ISODate));
+            todayAverage.insert(QStringLiteral("average"), (todayMaximum + todayMinimum) / 2.0);
+            updatedHistory.append(todayAverage);
+            temperatureHistory = updatedHistory;
+        }
 
         QJsonObject tomorrowResponse;
         tomorrowResponse.insert(QStringLiteral("code"), responseObject.value(QStringLiteral("code")));
         tomorrowResponse.insert(QStringLiteral("updateTime"), responseObject.value(QStringLiteral("updateTime")));
         tomorrowResponse.insert(QStringLiteral("fxLink"), responseObject.value(QStringLiteral("fxLink")));
         tomorrowResponse.insert(QStringLiteral("daily"), QJsonArray { tomorrow });
+        tomorrowResponse.insert(QStringLiteral("temperatureHistory"), temperatureHistory);
         tomorrowResponse.insert(QStringLiteral("refer"), responseObject.value(QStringLiteral("refer")));
 
         const QString weatherDirectory = QDir(QCoreApplication::applicationDirPath())

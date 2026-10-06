@@ -146,7 +146,7 @@ Booth::Booth(QObject *parent)
 				qWarning() << "Booth audio playback failed:" << error << errorString;
 				emit statusMessage(QStringLiteral("Qt 播放失败，尝试使用系统播放器：%1").arg(errorString));
 				if (!QDesktopServices::openUrl(m_player->source()))
-					emit statusMessage(QStringLiteral("系统播放器也无法打开 booth.m4a。"));
+					emit statusMessage(QStringLiteral("系统播放器也无法打开 zhantai.wav。"));
 			});
 	connect(m_player, &QMediaPlayer::playbackStateChanged, this,
 			[this](QMediaPlayer::PlaybackState state) {
@@ -244,14 +244,14 @@ void Booth::checkWatchedProcess()
 	}
 
 	qInfo() << "Monitored exe closed:" << m_watchedExePath;
-	emit statusMessage(QStringLiteral("所选程序已关闭，正在播放 booth.m4a。"));
+	emit statusMessage(QStringLiteral("所选程序已关闭，正在播放 zhantai.wav。"));
 	playBoothAudio();
 }
 
 void Booth::playBoothAudio()
 {
 	const QString audioPath = QCoreApplication::applicationDirPath()
-		+ QStringLiteral("/booth/booth.m4a");
+		+ QStringLiteral("/booth/zhantai.wav");
 	const QFileInfo audioFileInfo(audioPath);
 	if (!audioFileInfo.isFile() || !audioFileInfo.isReadable()) {
 		emit statusMessage(QStringLiteral("找不到音频文件：%1").arg(audioPath));

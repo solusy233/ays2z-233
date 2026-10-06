@@ -24,6 +24,8 @@ public:
     ~SettingsWindow();
 
 private:
+    void paintEvent(QPaintEvent *event) override;
+
     Ui::SettingsWindow *ui;
     WeatherWindow *weatherWindow;
 };

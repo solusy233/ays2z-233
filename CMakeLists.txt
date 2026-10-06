@@ -12,8 +12,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia Network Svg)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia Network Svg)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
         weather/weatherwindow.cpp
         weather/weatherwindow.h
         weather/weatherwindow.ui
+        Easter-egg/Easter-egg.cpp
+        Easter-egg/Easter-egg.h
         aboutwindows/mainwindows/app_icon.rc
         resources.qrc
 )
@@ -65,6 +67,7 @@ target_link_libraries(untitled PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Multimedia
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Svg
 )
 
 add_custom_command(TARGET untitled POST_BUILD
@@ -78,11 +81,20 @@ add_custom_command(TARGET untitled POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
             "$<TARGET_FILE_DIR:untitled>/booth"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/booth/booth.m4a"
-            "$<TARGET_FILE_DIR:untitled>/booth/booth.m4a"
+            "${CMAKE_CURRENT_SOURCE_DIR}/booth/zhantai.wav"
+            "$<TARGET_FILE_DIR:untitled>/booth/zhantai.wav"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/weather/picture"
             "$<TARGET_FILE_DIR:untitled>/weather/picture"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/weather/icons"
+            "$<TARGET_FILE_DIR:untitled>/weather/icons"
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_CURRENT_SOURCE_DIR}/weather/tips_sound"
+                "$<TARGET_FILE_DIR:untitled>/weather/tips_sound"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/weather/weathertips.json"
+                "$<TARGET_FILE_DIR:untitled>/weather/weathertips.json"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/Fout"
             "$<TARGET_FILE_DIR:untitled>/Fout"

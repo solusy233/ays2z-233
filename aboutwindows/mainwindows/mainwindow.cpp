@@ -5,11 +5,24 @@
 #include "../settings/settingswindow.h"
 #include "../../weather/weatherapi.h"
 #include "../../weather/weatherwindow.h"
+#include "../../Easter-egg/Easter-egg.h"
 #include <QCloseEvent>
 #include <QDebug>
+#include <QFont>
+#include <QGuiApplication>
 #include <QMenu>
 #include <QPainter>
 #include <QAction>
+#include <QPushButton>
+#include <QScreen>
+
+namespace {
+// 主界面按 1774x887 的设计稿等比排布（背景图尺寸一致）
+constexpr int kDesignWidth = 1774;
+constexpr int kDesignHeight = 887;
+// 缩放时给窗口标题栏、边框预留的余量
+constexpr qreal kScreenFitRatio = 0.95;
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,19 +32,67 @@ MainWindow::MainWindow(QWidget *parent)
     , weatherApi(new WeatherApi(this))
     , weatherWindow(nullptr)
     , settingsWindow(nullptr)
+    , easterEggWindow(nullptr)
     , m_trayIcon(new QSystemTrayIcon(QIcon(QStringLiteral(":/images/tray-icon.jpg")), this))
 {
     ui->setupUi(this);
+
+    // 高 DPI 缩放后屏幕的逻辑可用区域可能小于设计稿尺寸，直接使用设计稿尺寸会
+    // 导致窗口超出屏幕、界面显示不完整。这里按可用区域等比缩小整体界面。
+    QScreen *targetScreen = screen();
+    if (!targetScreen) {
+        targetScreen = QGuiApplication::primaryScreen();
+    }
+    qreal uiScale = 1.0;
+    if (targetScreen) {
+        const QRect available = targetScreen->availableGeometry();
+        const qreal fitWidth = available.width() * kScreenFitRatio / kDesignWidth;
+        const qreal fitHeight = available.height() * kScreenFitRatio / kDesignHeight;
+        uiScale = qMin<qreal>(1.0, qMin(fitWidth, fitHeight));
+    }
+
+    resize(qRound(kDesignWidth * uiScale), qRound(kDesignHeight * uiScale));
     setFixedSize(size());
+
+    const int settingsButtonWidth = qRound(ui->settingsButton->width() * uiScale);
+    const int settingsButtonHeight = qRound(ui->settingsButton->height() * uiScale);
+    ui->settingsButton->setFixedSize(settingsButtonWidth, settingsButtonHeight);
     ui->settingsButton->setParent(this);
-    ui->settingsButton->setGeometry(width() - 200 - ui->settingsButton->width(), 70,
-                                    ui->settingsButton->width(), ui->settingsButton->height());
+    ui->settingsButton->setGeometry(width() - qRound(200 * uiScale) - settingsButtonWidth,
+                                    qRound(70 * uiScale),
+                                    settingsButtonWidth, settingsButtonHeight);
+    QFont settingsButtonFont = ui->settingsButton->font();
+    if (settingsButtonFont.pointSizeF() > 0.0) {
+        settingsButtonFont.setPointSizeF(settingsButtonFont.pointSizeF() * uiScale);
+        ui->settingsButton->setFont(settingsButtonFont);
+    }
     ui->settingsButton->setEnabled(true);
     ui->settingsButton->setCursor(Qt::PointingHandCursor);
     ui->settingsButton->raise();
     ui->centralwidget->setAttribute(Qt::WA_TranslucentBackground);
     ui->centralwidget->setAutoFillBackground(false);
     ui->centralwidget->setStyleSheet(QStringLiteral("background: transparent;"));
+
+    auto *easterEggButton = new QPushButton(this);
+    easterEggButton->setObjectName(QStringLiteral("easterEggButton"));
+    easterEggButton->setGeometry(qRound(width() * 0.325), qRound(height() * 0.345),
+                                 qRound(width() * 0.114), qRound(height() * 0.232));
+    easterEggButton->setStyleSheet(QStringLiteral(
+        "QPushButton#easterEggButton { background: transparent; border: none; }"));
+    easterEggButton->setCursor(Qt::PointingHandCursor);
+    easterEggButton->setFocusPolicy(Qt::NoFocus);
+    easterEggButton->raise();
+    connect(easterEggButton, &QPushButton::clicked, this, [this]() {
+        if (!easterEggWindow) {
+            easterEggWindow = new EasterEggWindow(this);
+            connect(easterEggWindow, &QObject::destroyed, this, [this]() {
+                easterEggWindow = nullptr;
+            });
+        }
+        easterEggWindow->showFullScreen();
+        easterEggWindow->raise();
+        easterEggWindow->activateWindow();
+    });
 
     auto *trayMenu = new QMenu(this);
     auto *showAction = new QAction(QStringLiteral("显示窗口"), this);

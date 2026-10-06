@@ -3,6 +3,8 @@
 #include "ui_weatherwindow.h"
 
 #include <QCoreApplication>
+#include <QDate>
+#include <QAudioOutput>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -22,9 +24,13 @@
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QScreen>
+#include <QMediaPlayer>
+#include <QSvgRenderer>
 #include <QTextCursor>
+#include <QUrl>
 
 namespace {
 QRect fittedBackgroundRect(const QPixmap &pixmap, const QSize &size)
@@ -33,7 +39,7 @@ QRect fittedBackgroundRect(const QPixmap &pixmap, const QSize &size)
         return QRect();
 
     QSize scaledSize = pixmap.size();
-    scaledSize.scale(size, Qt::KeepAspectRatio);
+    scaledSize.scale(size, Qt::KeepAspectRatioByExpanding);
     return QRect((size.width() - scaledSize.width()) / 2,
                  (size.height() - scaledSize.height()) / 2,
                  scaledSize.width(),
@@ -140,6 +146,29 @@ void WeatherWindow::paintEvent(QPaintEvent *)
 
 void WeatherWindow::updatePanelLayout()
 {
+    if (!tipGlassFrame) {
+        tipGlassFrame = new QFrame(this);
+        tipGlassFrame->setStyleSheet(QStringLiteral(
+            "QFrame { background-color: rgba(255, 255, 255, 72); "
+            "border: 1px solid rgba(255, 255, 255, 155); border-radius: 20px; }"));
+        QGraphicsDropShadowEffect *tipShadow = new QGraphicsDropShadowEffect(tipGlassFrame);
+        tipShadow->setBlurRadius(24);
+        tipShadow->setOffset(0, 6);
+        tipShadow->setColor(QColor(25, 55, 80, 75));
+        tipGlassFrame->setGraphicsEffect(tipShadow);
+
+        tipLabel = new QLabel(tipGlassFrame);
+        tipLabel->setAlignment(Qt::AlignCenter);
+        tipLabel->setWordWrap(true);
+        tipLabel->setStyleSheet(QStringLiteral(
+            "QLabel { color: rgba(25, 48, 65, 235); background: transparent; "
+            "border: none; font-size: 32px; font-weight: 600; }"));
+    }
+
+    const int tipWidth = qMin(width() - 80, qMax(480, width() * 65 / 100));
+    tipGlassFrame->setGeometry((width() - tipWidth) / 2, 20, tipWidth, 70);
+    tipLabel->setGeometry(tipGlassFrame->rect().adjusted(18, 4, -18, -4));
+
     if (!glassPanel) {
         glassPanel = new QFrame(this);
         glassPanel->setStyleSheet(QStringLiteral(
@@ -156,7 +185,7 @@ void WeatherWindow::updatePanelLayout()
         glassPanel->lower();
     }
 
-    const QRect backgroundRect = fittedBackgroundRect(backgroundPixmap, size());
+    const QRect backgroundRect = rect();
     const int panelWidth = qMin(backgroundRect.width() - 48,
                                 qMax(420, qMin(backgroundRect.width() / 3, 620)));
     const int panelHeight = qMin(backgroundRect.height() - 48,
@@ -201,6 +230,13 @@ void WeatherWindow::updatePanelLayout()
         "selection-background-color: rgba(90, 145, 175, 150); }"));
     ui->weatherText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->weatherText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    if (weatherIconLabel) {
+        const int iconSize = qMin(96, ui->weatherText->height() / 4);
+        weatherIconLabel->setGeometry(ui->weatherText->geometry().right() - iconSize - 20,
+                                      ui->weatherText->geometry().y() + 12,
+                                      iconSize, iconSize);
+    }
 }
 
 WeatherWindow::WeatherWindow(QWidget *parent)
@@ -210,6 +246,10 @@ WeatherWindow::WeatherWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_DeleteOnClose);
+    tipPlayer = new QMediaPlayer(this);
+    tipAudioOutput = new QAudioOutput(this);
+    tipPlayer->setAudioOutput(tipAudioOutput);
+    tipAudioOutput->setVolume(1.0);
 
     applyWeatherBackground(100);
     updatePanelLayout();
@@ -251,6 +291,12 @@ void WeatherWindow::loadTemperatureSummary()
     }
 
     const QJsonObject tomorrow = daily.first().toObject();
+    const QJsonObject weatherDocument = document.object();
+    const QDate forecastDate = QDate::fromString(
+        tomorrow.value(QStringLiteral("fxDate")).toString(), Qt::ISODate);
+    const QDate displayDate = forecastDate.isValid() ? forecastDate : QDate::currentDate().addDays(1);
+    titleLabel->setText(QStringLiteral("%1 天气预报")
+                            .arg(displayDate.toString(QStringLiteral("yyyy年M月d日"))));
 
     int conditionCode = 0;
     const QJsonValue conditionValue = tomorrow.value(QStringLiteral("condition"));
@@ -268,6 +314,7 @@ void WeatherWindow::loadTemperatureSummary()
 
     if (conditionCode > 0)
         applyWeatherBackground(conditionCode);
+    loadWeatherTip(conditionCode, weatherDocument.value(QStringLiteral("temperatureHistory")).toArray());
 
     const QString maximum = tomorrow.value(QStringLiteral("tempMax")).toString();
     const QString minimum = tomorrow.value(QStringLiteral("tempMin")).toString();
@@ -276,10 +323,141 @@ void WeatherWindow::loadTemperatureSummary()
     const QString windDirection = tomorrow.value(QStringLiteral("windDirDay")).toString();
     const QString weatherCondition = tomorrow.value(QStringLiteral("textDay")).toString(
         tomorrow.value(QStringLiteral("textNight")).toString());
+    const QString iconCode = tomorrow.value(QStringLiteral("iconDay")).toString();
+    if (!weatherIconLabel) {
+        weatherIconLabel = new QLabel(this);
+        weatherIconLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        weatherIconLabel->setStyleSheet(QStringLiteral("background: transparent; border: none;"));
+        updatePanelLayout();
+    }
+
+    const QString iconPath = QDir(QCoreApplication::applicationDirPath())
+                                 .filePath(QStringLiteral("weather/icons/%1.svg").arg(iconCode));
+    QSvgRenderer iconRenderer(iconPath);
+    if (iconRenderer.isValid()) {
+        QPixmap iconPixmap(96, 96);
+        iconPixmap.fill(Qt::transparent);
+        QPainter iconPainter(&iconPixmap);
+        iconRenderer.render(&iconPainter, QRectF(iconPixmap.rect()));
+        iconPainter.end();
+
+        QPainter tintPainter(&iconPixmap);
+        tintPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        tintPainter.fillRect(iconPixmap.rect(), QColor(25, 48, 65, 235));
+        weatherIconLabel->setPixmap(iconPixmap);
+        weatherIconLabel->show();
+    } else {
+        weatherIconLabel->hide();
+    }
+
     const QString summary = QStringLiteral(
         "天气情况  %1\n\n温度      %2 - %3 °C\n\n风向      %4\n\n风力      %5 级\n\n风速      %6 km/h")
                                 .arg(weatherCondition, minimum, maximum,
                                      windDirection, windScale, windSpeed);
     ui->weatherText->setPlainText(summary);
     applyCustomWeatherFont(titleLabel, closeButton, ui->weatherText);
+}
+
+void WeatherWindow::loadWeatherTip(int weatherCode, const QJsonArray &temperatureHistory)
+{
+    const QString tipsPath = QDir(QCoreApplication::applicationDirPath())
+                                .filePath(QStringLiteral("weather/weathertips.json"));
+    QFile tipsFile(tipsPath);
+    if (!tipsFile.open(QIODevice::ReadOnly)) {
+        qWarning() << "无法打开天气提示文件:" << tipsPath << tipsFile.errorString();
+        return;
+    }
+
+    QJsonParseError parseError;
+    const QJsonDocument tipsDocument = QJsonDocument::fromJson(tipsFile.readAll(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !tipsDocument.isObject()) {
+        qWarning() << "天气提示文件解析失败:" << parseError.errorString();
+        return;
+    }
+
+    const QDate today = QDate::currentDate();
+    double todayAverage = 0.0;
+    double yesterdayAverage = 0.0;
+    bool hasTodayAverage = false;
+    bool hasYesterdayAverage = false;
+    for (const QJsonValue &entry : temperatureHistory) {
+        if (!entry.isObject())
+            continue;
+        const QJsonObject historyEntry = entry.toObject();
+        const QDate entryDate = QDate::fromString(
+            historyEntry.value(QStringLiteral("date")).toString(), Qt::ISODate);
+        const QJsonValue averageValue = historyEntry.value(QStringLiteral("average"));
+        if (!averageValue.isDouble())
+            continue;
+        const double average = averageValue.toDouble();
+        if (entryDate == today) {
+            todayAverage = average;
+            hasTodayAverage = true;
+        } else if (entryDate == today.addDays(-1)) {
+            yesterdayAverage = average;
+            hasYesterdayAverage = true;
+        }
+    }
+
+    QString category;
+    if (hasTodayAverage && hasYesterdayAverage) {
+        const double temperatureChange = todayAverage - yesterdayAverage;
+        if (temperatureChange > 6.0)
+            category = QStringLiteral("Heating_up");
+        else if (temperatureChange < -6.0)
+            category = QStringLiteral("Cooling_down");
+    }
+
+    if (category.isEmpty()) {
+        if (weatherCode >= 100 && weatherCode < 200)
+            category = QStringLiteral("normor_tips");
+        else if (weatherCode >= 300 && weatherCode < 400)
+            category = QStringLiteral("Rain");
+        else if (weatherCode >= 400 && weatherCode < 500)
+            category = QStringLiteral("Snow");
+        else if ((weatherCode >= 500 && weatherCode <= 502)
+                 || (weatherCode >= 509 && weatherCode <= 515))
+            category = QStringLiteral("Fog");
+        else
+            category = QStringLiteral("Default");
+    }
+
+    const QJsonObject tipsObject = tipsDocument.object();
+    QJsonArray candidates = category == QStringLiteral("normor_tips")
+                                ? tipsObject.value(category).toArray()
+                                : tipsObject.value(QStringLiteral("weather_tips")).toObject()
+                                      .value(category).toArray();
+    if (candidates.isEmpty() && category != QStringLiteral("Default")) {
+        category = QStringLiteral("Default");
+        candidates = tipsObject.value(QStringLiteral("weather_tips")).toObject()
+                         .value(category).toArray();
+    }
+    if (candidates.isEmpty())
+        return;
+
+    const int selectedIndex = QRandomGenerator::global()->bounded(candidates.size());
+    const QString tipText = candidates.at(selectedIndex).toString();
+    if (tipText.isEmpty())
+        return;
+    tipLabel->setText(tipText);
+
+    QString soundFolder = QStringLiteral("others");
+    if (weatherCode >= 300 && weatherCode < 400)
+        soundFolder = QStringLiteral("rainy");
+    else if (weatherCode >= 400 && weatherCode < 500)
+        soundFolder = QStringLiteral("snow");
+    else if (weatherCode >= 500 && weatherCode < 600)
+        soundFolder = QStringLiteral("fog");
+
+    const QDir soundDirectory(QDir(QCoreApplication::applicationDirPath())
+                                  .filePath(QStringLiteral("weather/tips_sound/%1").arg(soundFolder)));
+    const QStringList soundFiles = soundDirectory.entryList(
+        {QStringLiteral("*.wav"), QStringLiteral("*.mp3"), QStringLiteral("*.m4a")},
+        QDir::Files, QDir::Name);
+    if (!soundFiles.isEmpty()) {
+        const QString soundPath = soundDirectory.filePath(
+            soundFiles.at(QRandomGenerator::global()->bounded(soundFiles.size())));
+        tipPlayer->setSource(QUrl::fromLocalFile(soundPath));
+        tipPlayer->play();
+    }
 }

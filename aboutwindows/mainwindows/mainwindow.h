@@ -10,6 +10,7 @@ class Booth;
 class WeatherApi;
 class WeatherWindow;
 class SettingsWindow;
+class EasterEggWindow;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +33,7 @@ private:
     WeatherApi *weatherApi;
     WeatherWindow *weatherWindow;
     SettingsWindow *settingsWindow;
+    EasterEggWindow *easterEggWindow;
     QSystemTrayIcon *m_trayIcon;
 
 protected:

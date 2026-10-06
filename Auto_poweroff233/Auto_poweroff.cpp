@@ -173,8 +173,10 @@ void AutoPoweroff::startPlaylist()
 	playlist = {trackPath};
 	currentTrack = 0;
 	emit playbackStarted();
-	emit statusChanged(QStringLiteral("开始播放星期 %1 的音乐：%2").arg(trackNumber).arg(trackName));
-	playNextTrack();
+	emit statusChanged(QStringLiteral("10 秒后开始播放星期 %1 的音乐：%2").arg(trackNumber).arg(trackName));
+	QTimer::singleShot(10 * 1000, this, [this]() {
+		playNextTrack();
+	});
 }
 
 void AutoPoweroff::playNextTrack()

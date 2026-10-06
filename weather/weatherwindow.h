@@ -6,6 +6,10 @@
 #include <QPushButton>
 #include <QWidget>
 
+class QAudioOutput;
+class QJsonArray;
+class QMediaPlayer;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class WeatherWindow;
@@ -25,14 +29,20 @@ protected:
 
 private:
     void loadTemperatureSummary();
+    void loadWeatherTip(int weatherCode, const QJsonArray &temperatureHistory);
     void applyWeatherBackground(int conditionCode);
     void updatePanelLayout();
 
     Ui::WeatherWindow *ui;
     QPixmap backgroundPixmap;
     QFrame *glassPanel = nullptr;
+    QFrame *tipGlassFrame = nullptr;
     QLabel *titleLabel = nullptr;
+    QLabel *tipLabel = nullptr;
+    QLabel *weatherIconLabel = nullptr;
     QPushButton *closeButton = nullptr;
+    QMediaPlayer *tipPlayer = nullptr;
+    QAudioOutput *tipAudioOutput = nullptr;
 };
 
 #endif // WEATHERWINDOW_H
