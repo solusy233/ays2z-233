@@ -1,0 +1,1183 @@
+/* ===================================================================
+   ays2z-233 Web Edition - Anime Girls Band Themes Engine
+   Design Language:
+     - Modular Anime Girls Band Deep Customization & Frosted Glass Themes
+     - 6 Themes: default (Pure White Glass), mygo, mujica, bocchi, kon, gbc
+     - Zero Emojis Architecture
+     - High Legibility Typography & Specular Highlights
+   =================================================================== */
+
+/* ===================================================================
+   1. Theme Token Variable Scopes
+   =================================================================== */
+
+/* --- Default Theme: Pure White Glassmorphism --- */
+:root,
+body[data-theme="default"],
+html[data-theme="default"] {
+    --theme-id: "default";
+    --theme-name: "纯白玻璃拟态";
+
+    /* Glass Surfaces & Panels */
+    --glass-bg: rgba(255, 255, 255, 0.42);
+    --glass-panel-bg: rgba(255, 255, 255, 0.42);
+    --card-bg: rgba(255, 255, 255, 0.45);
+    --card-bg-hover: rgba(255, 255, 255, 0.58);
+    --card-bg-active: rgba(255, 255, 255, 0.68);
+    --border-glass: rgba(255, 255, 255, 0.52);
+    --card-border: rgba(255, 255, 255, 0.48);
+    --card-border-highlight: rgba(255, 255, 255, 0.85);
+
+    /* Glass Shadows */
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.65);
+    --glass-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.55);
+    --glass-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.75);
+
+    /* Neutral Dark Typography */
+    --text-primary: #30343B;
+    --text-secondary: #4B5563;
+    --text-title: #212429;
+    --text-muted: #707782;
+    --text-light: #8E95A2;
+    --text-inverse: #FFFFFF;
+
+    /* Accents & States */
+    --accent-color: #0284C7;
+    --accent-glow: rgba(2, 132, 199, 0.25);
+    --badge-bg: rgba(16, 185, 129, 0.18);
+    --badge-color: #059669;
+    --badge-border: rgba(16, 185, 129, 0.35);
+
+    /* Buttons */
+    --button-bg: rgba(255, 255, 255, 0.50);
+    --button-text: #30343B;
+    --button-border: rgba(255, 255, 255, 0.60);
+    --button-hover-bg: rgba(255, 255, 255, 0.75);
+
+    /* Gradients, Highlights & Overlays */
+    --theme-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(240, 244, 248, 0.25));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.15) 100%);
+    --theme-modal-bg: rgba(255, 255, 255, 0.52);
+    --theme-fullscreen-bg: rgba(255, 255, 255, 0.35);
+}
+
+/* --- Theme 1: MyGO!!!!! (迷茫青蓝雨夜、卡带创可贴质感、柔和冷调磨砂玻璃) --- */
+body[data-theme="mygo"],
+html[data-theme="mygo"] {
+    --theme-id: "mygo";
+    --theme-name: "MyGO!!!!!";
+
+    /* Cool Cyan-Blue Rainy Glass */
+    --glass-bg: rgba(12, 28, 48, 0.65);
+    --glass-panel-bg: rgba(12, 28, 48, 0.65);
+    --card-bg: rgba(16, 36, 60, 0.58);
+    --card-bg-hover: rgba(24, 52, 84, 0.72);
+    --card-bg-active: rgba(32, 68, 108, 0.82);
+    --border-glass: rgba(56, 189, 248, 0.38);
+    --card-border: rgba(72, 202, 228, 0.32);
+    --card-border-highlight: rgba(125, 211, 252, 0.85);
+
+    /* Deep Rainy Night Glass Shadows */
+    --glass-shadow: 0 10px 36px rgba(4, 15, 30, 0.35), inset 0 1px 1.5px rgba(186, 230, 253, 0.45);
+    --glass-shadow-sm: 0 4px 18px rgba(4, 15, 30, 0.25), inset 0 1px 1px rgba(186, 230, 253, 0.35);
+    --glass-shadow-lg: 0 20px 54px rgba(2, 10, 22, 0.45), 0 0 24px rgba(56, 189, 248, 0.2), inset 0 1px 2px rgba(224, 242, 254, 0.6);
+
+    /* Luminous Cool-Tone Typography */
+    --text-primary: #E0F2FE;
+    --text-secondary: #BAE6FD;
+    --text-title: #F0F9FF;
+    --text-muted: #7DD3FC;
+    --text-light: #93C5FD;
+    --text-inverse: #0C1E34;
+
+    /* Signature Neon Cyan & Cassette Bandage Accents */
+    --accent-color: #38BDF8;
+    --accent-glow: rgba(56, 189, 248, 0.40);
+    --badge-bg: rgba(14, 165, 233, 0.22);
+    --badge-color: #7DD3FC;
+    --badge-border: rgba(56, 189, 248, 0.45);
+
+    /* Cool Rain Buttons */
+    --button-bg: rgba(14, 165, 233, 0.26);
+    --button-text: #F0F9FF;
+    --button-border: rgba(56, 189, 248, 0.45);
+    --button-hover-bg: rgba(56, 189, 248, 0.42);
+
+    /* Overlays & Atmosphere */
+    --theme-gradient: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(3, 105, 161, 0.15));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.9), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(14, 165, 233, 0.12) 0%, rgba(6, 20, 36, 0.42) 100%);
+    --theme-modal-bg: rgba(10, 24, 42, 0.82);
+    --theme-fullscreen-bg: rgba(8, 20, 36, 0.46);
+}
+
+/* --- Theme 2: Ave Mujica (暗夜黑紫哥特、血蔷薇、月光黑曜石玻璃) --- */
+body[data-theme="mujica"],
+html[data-theme="mujica"],
+body[data-theme="ave-mujica"],
+html[data-theme="ave-mujica"] {
+    --theme-id: "mujica";
+    --theme-name: "Ave Mujica";
+
+    /* Velvet Obsidian Amethyst Glass */
+    --glass-bg: rgba(18, 10, 32, 0.72);
+    --glass-panel-bg: rgba(18, 10, 32, 0.72);
+    --card-bg: rgba(26, 14, 46, 0.65);
+    --card-bg-hover: rgba(40, 20, 68, 0.78);
+    --card-bg-active: rgba(55, 28, 92, 0.88);
+    --border-glass: rgba(192, 132, 252, 0.35);
+    --card-border: rgba(168, 85, 247, 0.28);
+    --card-border-highlight: rgba(225, 29, 72, 0.75);
+
+    /* Gothic Midnight Shadows */
+    --glass-shadow: 0 10px 40px rgba(5, 2, 12, 0.45), inset 0 1px 1.5px rgba(233, 213, 255, 0.35);
+    --glass-shadow-sm: 0 4px 20px rgba(5, 2, 12, 0.3), inset 0 1px 1px rgba(233, 213, 255, 0.25);
+    --glass-shadow-lg: 0 20px 60px rgba(5, 2, 12, 0.6), 0 0 28px rgba(168, 85, 247, 0.25), inset 0 1px 2px rgba(243, 232, 255, 0.5);
+
+    /* Moonlight Silver & Amethyst Typography */
+    --text-primary: #F3E8FF;
+    --text-secondary: #E9D5FF;
+    --text-title: #FAF5FF;
+    --text-muted: #C084FC;
+    --text-light: #D8B4FE;
+    --text-inverse: #150A26;
+
+    /* Blood Rose & Velvet Accents */
+    --accent-color: #E11D48;
+    --accent-glow: rgba(225, 29, 72, 0.45);
+    --badge-bg: rgba(225, 29, 72, 0.20);
+    --badge-color: #FDA4AF;
+    --badge-border: rgba(225, 29, 72, 0.45);
+
+    /* Gothic Regal Buttons */
+    --button-bg: rgba(147, 51, 234, 0.28);
+    --button-text: #FAF5FF;
+    --button-border: rgba(192, 132, 252, 0.45);
+    --button-hover-bg: rgba(168, 85, 247, 0.42);
+
+    /* Overlays & Atmosphere */
+    --theme-gradient: linear-gradient(135deg, rgba(147, 51, 234, 0.22), rgba(225, 29, 72, 0.18));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.85), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(147, 51, 234, 0.15) 0%, rgba(10, 4, 18, 0.55) 100%);
+    --theme-modal-bg: rgba(15, 8, 26, 0.84);
+    --theme-fullscreen-bg: rgba(12, 6, 22, 0.48);
+}
+
+/* --- Theme 3: 孤独摇滚 (结束乐队、波奇粉色霓光、吉他效果器、纸箱浅卡其玻璃) --- */
+body[data-theme="bocchi"],
+html[data-theme="bocchi"] {
+    --theme-id: "bocchi";
+    --theme-name: "孤独摇滚";
+
+    /* Cardboard Warm Peach & Blush Frosted Glass */
+    --glass-bg: rgba(253, 244, 246, 0.72);
+    --glass-panel-bg: rgba(253, 244, 246, 0.72);
+    --card-bg: rgba(255, 241, 245, 0.62);
+    --card-bg-hover: rgba(255, 232, 239, 0.78);
+    --card-bg-active: rgba(254, 205, 219, 0.88);
+    --border-glass: rgba(244, 114, 182, 0.45);
+    --card-border: rgba(251, 146, 60, 0.35);
+    --card-border-highlight: rgba(244, 63, 94, 0.85);
+
+    /* Soft Warm Shading */
+    --glass-shadow: 0 10px 36px rgba(159, 18, 57, 0.10), inset 0 1px 1.5px rgba(255, 255, 255, 0.90);
+    --glass-shadow-sm: 0 4px 18px rgba(159, 18, 57, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.80);
+    --glass-shadow-lg: 0 20px 54px rgba(159, 18, 57, 0.14), 0 0 24px rgba(244, 114, 182, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+
+    /* Espresso Charcoal & Warm Pink Typography */
+    --text-primary: #3A1F28;
+    --text-secondary: #5C2B3C;
+    --text-title: #260E18;
+    --text-muted: #9E6B7C;
+    --text-light: #C08497;
+    --text-inverse: #FFFFFF;
+
+    /* Bocchi Pink Neon & Stompbox Accents */
+    --accent-color: #E11D48;
+    --accent-glow: rgba(225, 29, 72, 0.35);
+    --badge-bg: rgba(244, 63, 94, 0.15);
+    --badge-color: #BE123C;
+    --badge-border: rgba(244, 63, 94, 0.38);
+
+    /* Cardboard & Stompbox Buttons */
+    --button-bg: rgba(255, 228, 236, 0.85);
+    --button-text: #881337;
+    --button-border: rgba(244, 114, 182, 0.55);
+    --button-hover-bg: rgba(254, 205, 219, 0.95);
+
+    /* Overlays & Atmosphere */
+    --theme-gradient: linear-gradient(135deg, rgba(255, 228, 236, 0.6), rgba(254, 243, 199, 0.4));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(244, 114, 182, 0.85), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(244, 114, 182, 0.14) 0%, rgba(30, 15, 22, 0.25) 100%);
+    --theme-modal-bg: rgba(254, 242, 244, 0.90);
+    --theme-fullscreen-bg: rgba(255, 245, 247, 0.45);
+}
+
+/* --- Theme 4: 轻音少女 (放学后下午茶暖调、红茶琥珀、奶油柔光、温馨部室玻璃) --- */
+body[data-theme="kon"],
+html[data-theme="kon"],
+body[data-theme="k-on"],
+html[data-theme="k-on"] {
+    --theme-id: "kon";
+    --theme-name: "轻音少女";
+
+    /* Warm Tea Amber & Creamy Milk Glass */
+    --glass-bg: rgba(254, 250, 242, 0.75);
+    --glass-panel-bg: rgba(254, 250, 242, 0.75);
+    --card-bg: rgba(255, 248, 235, 0.65);
+    --card-bg-hover: rgba(254, 243, 218, 0.82);
+    --card-bg-active: rgba(253, 230, 188, 0.92);
+    --border-glass: rgba(245, 158, 11, 0.42);
+    --card-border: rgba(217, 119, 6, 0.32);
+    --card-border-highlight: rgba(245, 158, 11, 0.85);
+
+    /* Warm Afternoon Glow Shadows */
+    --glass-shadow: 0 10px 36px rgba(120, 53, 15, 0.10), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+    --glass-shadow-sm: 0 4px 18px rgba(120, 53, 15, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+    --glass-shadow-lg: 0 20px 54px rgba(120, 53, 15, 0.15), 0 0 24px rgba(245, 158, 11, 0.22), inset 0 1px 2px rgba(255, 255, 255, 1);
+
+    /* Deep Tea & Chocolate Wood Typography */
+    --text-primary: #451A03;
+    --text-secondary: #78350F;
+    --text-title: #2E1002;
+    --text-muted: #92400E;
+    --text-light: #B45309;
+    --text-inverse: #FFFFFF;
+
+    /* Amber Caramel & Sweet Strawberry Cake Accents */
+    --accent-color: #D97706;
+    --accent-glow: rgba(217, 119, 6, 0.35);
+    --badge-bg: rgba(245, 158, 11, 0.18);
+    --badge-color: #B45309;
+    --badge-border: rgba(245, 158, 11, 0.40);
+
+    /* Pastry Cream Buttons */
+    --button-bg: rgba(254, 243, 199, 0.85);
+    --button-text: #78350F;
+    --button-border: rgba(245, 158, 11, 0.50);
+    --button-hover-bg: rgba(253, 230, 138, 0.95);
+
+    /* Overlays & Atmosphere */
+    --theme-gradient: linear-gradient(135deg, rgba(254, 243, 199, 0.6), rgba(254, 215, 170, 0.35));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.85), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.12) 0%, rgba(46, 16, 2, 0.25) 100%);
+    --theme-modal-bg: rgba(254, 249, 239, 0.90);
+    --theme-fullscreen-bg: rgba(255, 251, 244, 0.45);
+}
+
+/* --- Theme 5: 少女乐队的呐喊 (刺无 Togenashi Togeari、川崎夜景冷蓝配刺目赤红、尖锐棱角朋克玻璃) --- */
+body[data-theme="gbc"],
+html[data-theme="gbc"],
+body[data-theme="togenashi"],
+html[data-theme="togenashi"] {
+    --theme-id: "gbc";
+    --theme-name: "少女乐队的呐喊";
+
+    /* Kawasaki Industrial Midnight Navy & Cold Asphalt Glass */
+    --glass-bg: rgba(10, 16, 28, 0.75);
+    --glass-panel-bg: rgba(10, 16, 28, 0.75);
+    --card-bg: rgba(15, 23, 42, 0.68);
+    --card-bg-hover: rgba(24, 34, 60, 0.82);
+    --card-bg-active: rgba(32, 46, 80, 0.92);
+    --border-glass: rgba(239, 68, 68, 0.45);
+    --card-border: rgba(71, 85, 105, 0.45);
+    --card-border-highlight: rgba(239, 68, 68, 0.88);
+
+    /* Piercing High-Voltage Shadows */
+    --glass-shadow: 0 10px 40px rgba(2, 6, 14, 0.50), inset 0 1px 1.5px rgba(248, 113, 113, 0.35);
+    --glass-shadow-sm: 0 4px 20px rgba(2, 6, 14, 0.35), inset 0 1px 1px rgba(248, 113, 113, 0.25);
+    --glass-shadow-lg: 0 20px 60px rgba(2, 6, 14, 0.65), 0 0 28px rgba(239, 68, 68, 0.3), inset 0 1px 2px rgba(254, 202, 202, 0.5);
+
+    /* Stark Industrial White & Steel Typography */
+    --text-primary: #F1F5F9;
+    --text-secondary: #E2E8F0;
+    --text-title: #FFFFFF;
+    --text-muted: #94A3B8;
+    --text-light: #CBD5E1;
+    --text-inverse: #0F172A;
+
+    /* Piercing Rebel Crimson Accents */
+    --accent-color: #EF4444;
+    --accent-glow: rgba(239, 68, 68, 0.50);
+    --badge-bg: rgba(239, 68, 68, 0.22);
+    --badge-color: #FCA5A5;
+    --badge-border: rgba(239, 68, 68, 0.55);
+
+    /* High-Voltage Punk Buttons */
+    --button-bg: rgba(239, 68, 68, 0.25);
+    --button-text: #FFFFFF;
+    --button-border: rgba(239, 68, 68, 0.50);
+    --button-hover-bg: rgba(239, 68, 68, 0.45);
+
+    /* Overlays & Atmosphere */
+    --theme-gradient: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(30, 58, 138, 0.2));
+    --theme-highlight-line: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.95), transparent);
+    --theme-tint-overlay: radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.14) 0%, rgba(3, 7, 18, 0.60) 100%);
+    --theme-modal-bg: rgba(10, 16, 28, 0.86);
+    --theme-fullscreen-bg: rgba(8, 13, 23, 0.48);
+}
+
+/* ===================================================================
+   2. Theme Engine Base Application & Component Skinning
+   =================================================================== */
+
+/* Desktop Background Overlay Tint */
+body[data-theme] .background-container .bg-overlay-tint {
+    background: var(--theme-tint-overlay);
+    transition: background 0.4s ease;
+}
+
+/* Control Center Main Container */
+body[data-theme] .control-center-panel {
+    background: var(--glass-panel-bg);
+    border-color: var(--border-glass);
+    box-shadow: var(--glass-shadow-lg);
+    transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+body[data-theme] .control-center-panel::before {
+    background: var(--theme-highlight-line);
+}
+
+body[data-theme] .panel-header {
+    border-bottom: 1px solid var(--border-glass);
+}
+
+/* Typography Bindings */
+body[data-theme] .brand-name,
+body[data-theme] .clock-digits,
+body[data-theme] .module-title,
+body[data-theme] .weather-launch-temp,
+body[data-theme] .music-name,
+body[data-theme] .modal-title,
+body[data-theme] .fs-title,
+body[data-theme] .sum-temp,
+body[data-theme] .compass-speed-num,
+body[data-theme] .vis-num,
+body[data-theme] .hum-percent,
+body[data-theme] .uv-num,
+body[data-theme] .aqi-num,
+body[data-theme] .grid-card-title,
+body[data-theme] .panorama-panel-title {
+    color: var(--text-title);
+}
+
+body[data-theme] .brand-desc,
+body[data-theme] .clock-sub-date,
+body[data-theme] .weather-launch-line2,
+body[data-theme] .module-field-label,
+body[data-theme] .slider-lbl,
+body[data-theme] .music-sub,
+body[data-theme] .fs-subtitle,
+body[data-theme] .sum-feels,
+body[data-theme] .sum-highlow,
+body[data-theme] .sum-inline-item .lbl,
+body[data-theme] .grid-card-sub-desc,
+body[data-theme] .modal-subtitle {
+    color: var(--text-muted);
+}
+
+body[data-theme] .weather-launch-cond,
+body[data-theme] .sum-cond,
+body[data-theme] .sum-inline-item .val,
+body[data-theme] .countdown-banner,
+body[data-theme] .modern-checkbox-row,
+body[data-theme] .form-label {
+    color: var(--text-primary);
+}
+
+/* Dynamic Clock Specular Glow */
+body[data-theme] .clock-digits {
+    text-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* Core Glass Cards & Containers */
+body[data-theme] .module-glass-card,
+body[data-theme] .weather-launch-card,
+body[data-theme] .grid-card-12,
+body[data-theme] .current-weather-summary-bar,
+body[data-theme] .compact-music-player,
+body[data-theme] .countdown-banner,
+body[data-theme] .panorama-left-panel,
+body[data-theme] .panorama-right-panel,
+body[data-theme] .hourly-canvas-wrapper,
+body[data-theme] .hourly-list-wrapper,
+body[data-theme] .msn-daily-card {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: var(--glass-shadow-sm);
+    transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body[data-theme] .module-glass-card:hover,
+body[data-theme] .weather-launch-card:hover,
+body[data-theme] .grid-card-12:hover,
+body[data-theme] .msn-daily-card:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--card-border-highlight);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Badges & Status Indicators */
+body[data-theme] .weather-launch-badge,
+body[data-theme] .module-status-badge,
+body[data-theme] .grid-card-tag {
+    background: var(--badge-bg);
+    color: var(--badge-color);
+    border: 1px solid var(--badge-border);
+    transition: all 0.25s ease;
+}
+
+/* Action Buttons & Weather Fullscreen Launch */
+body[data-theme] .weather-launch-btn {
+    background: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--border-glass);
+    box-shadow: 0 4px 16px var(--accent-glow);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body[data-theme] .weather-launch-btn:hover {
+    box-shadow: 0 6px 22px var(--accent-glow);
+    filter: brightness(1.12);
+    transform: scale(1.04);
+}
+
+/* Interactive Controls & Navigation Pills */
+body[data-theme] .nav-pill-btn,
+body[data-theme] .nav-win-btn,
+body[data-theme] .btn-compact,
+body[data-theme] .btn-primary,
+body[data-theme] .city-capsule-btn,
+body[data-theme] .metric-tab-btn,
+body[data-theme] .fullscreen-tab-btn,
+body[data-theme] .dash-wp-cat-tab,
+body[data-theme] .wp-cat-tab,
+body[data-theme] .chart-mode-btns .mode-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body[data-theme] .nav-pill-btn:hover,
+body[data-theme] .nav-win-btn:hover,
+body[data-theme] .btn-compact:hover,
+body[data-theme] .btn-primary:hover,
+body[data-theme] .city-capsule-btn:hover,
+body[data-theme] .metric-tab-btn:hover,
+body[data-theme] .fullscreen-tab-btn:hover,
+body[data-theme] .dash-wp-cat-tab:hover,
+body[data-theme] .wp-cat-tab:hover {
+    background: var(--button-hover-bg);
+    color: var(--text-title);
+    border-color: var(--card-border-highlight);
+    box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+/* Active State for Tabs, Capsules & Play Button */
+body[data-theme] .city-capsule-btn.active,
+body[data-theme] .metric-tab-btn.active,
+body[data-theme] .fullscreen-tab-btn.active,
+body[data-theme] .dash-wp-cat-tab.active,
+body[data-theme] .wp-cat-tab.active,
+body[data-theme] .chart-mode-btns .mode-btn.active,
+body[data-theme] .compact-play-btn {
+    background: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--border-glass) !important;
+    box-shadow: 0 4px 16px var(--accent-glow) !important;
+}
+
+/* Sliders & Audio Equalizer Animation Bars */
+body[data-theme] .modern-slider {
+    accent-color: var(--accent-color);
+}
+
+body[data-theme] .music-eq span {
+    background: var(--accent-color);
+}
+
+/* Inputs & Form Fields */
+body[data-theme] .form-input,
+body[data-theme] .city-search-input,
+body[data-theme] .modern-time-input {
+    background: var(--card-bg);
+    border: 1px solid var(--border-glass);
+    color: var(--text-title);
+}
+
+body[data-theme] .form-input:focus,
+body[data-theme] .city-search-input:focus,
+body[data-theme] .modern-time-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-glow);
+    outline: none;
+}
+
+/* System Modals & Popups */
+body[data-theme] .modal-content {
+    background: var(--theme-modal-bg);
+    border-color: var(--border-glass);
+    box-shadow: var(--glass-shadow-lg);
+}
+
+body[data-theme] .fullscreen-weather-modal {
+    background: var(--theme-fullscreen-bg);
+}
+
+/* Weather Floating Tip Bar */
+body[data-theme] .top-weather-tip-bar {
+    background: var(--card-bg);
+    border-color: var(--border-glass);
+    color: var(--text-primary);
+}
+
+body[data-theme] .top-weather-tip-bar .tip-dot {
+    background: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* ===================================================================
+   3. Theme-Specific Micro-Decorations & Atmospheric Accents
+   =================================================================== */
+
+/* --- MyGO!!!!! Special Decor --- */
+body[data-theme="mygo"] .control-center-panel {
+    background-image: 
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        repeating-linear-gradient(135deg, rgba(56, 189, 248, 0.02) 0px, rgba(56, 189, 248, 0.02) 2px, transparent 2px, transparent 12px);
+}
+
+body[data-theme="mygo"] .module-glass-card {
+    position: relative;
+    overflow: hidden;
+}
+
+body[data-theme="mygo"] .module-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.7), transparent);
+    pointer-events: none;
+}
+
+body[data-theme="mygo"] .weather-launch-badge,
+body[data-theme="mygo"] .module-status-badge {
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+/* --- Ave Mujica Special Decor --- */
+body[data-theme="mujica"] .control-center-panel,
+body[data-theme="ave-mujica"] .control-center-panel {
+    background-image: 
+        radial-gradient(circle at 85% 15%, rgba(225, 29, 72, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(147, 51, 234, 0.12) 0%, transparent 45%);
+    box-shadow: 0 25px 65px rgba(5, 2, 12, 0.65), 0 0 35px rgba(147, 51, 234, 0.25);
+}
+
+body[data-theme="mujica"] .module-glass-card,
+body[data-theme="ave-mujica"] .module-glass-card {
+    position: relative;
+    border-radius: 18px;
+    box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.12), var(--glass-shadow-sm);
+}
+
+body[data-theme="mujica"] .module-glass-card::before,
+body[data-theme="ave-mujica"] .module-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(225, 29, 72, 0.8), rgba(192, 132, 252, 0.8), transparent);
+    pointer-events: none;
+}
+
+body[data-theme="mujica"] .weather-launch-btn,
+body[data-theme="ave-mujica"] .weather-launch-btn {
+    background: linear-gradient(135deg, #E11D48, #9333EA);
+    box-shadow: 0 4px 18px rgba(225, 29, 72, 0.45);
+}
+
+/* --- 孤独摇滚 Bocchi Special Decor --- */
+body[data-theme="bocchi"] .control-center-panel {
+    background-image: 
+        radial-gradient(circle at 90% 10%, rgba(244, 63, 94, 0.08) 0%, transparent 35%),
+        radial-gradient(circle at 10% 90%, rgba(251, 146, 60, 0.06) 0%, transparent 40%);
+}
+
+body[data-theme="bocchi"] .module-status-badge {
+    position: relative;
+    padding-left: 14px;
+}
+
+body[data-theme="bocchi"] .module-status-badge::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #E11D48;
+    box-shadow: 0 0 8px #E11D48;
+    animation: bocchi-stomp-pulse 2s infinite ease-in-out;
+}
+
+@keyframes bocchi-stomp-pulse {
+    0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+    50% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
+}
+
+body[data-theme="bocchi"] .weather-launch-btn {
+    background: linear-gradient(135deg, #F43F5E, #FB7185);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.4);
+}
+
+/* --- 轻音少女 K-ON! Special Decor --- */
+body[data-theme="kon"] .control-center-panel,
+body[data-theme="k-on"] .control-center-panel {
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 90%, rgba(251, 191, 36, 0.08) 0%, transparent 40%);
+}
+
+body[data-theme="kon"] .module-glass-card,
+body[data-theme="k-on"] .module-glass-card {
+    border-radius: 22px;
+}
+
+body[data-theme="kon"] .module-glass-card::before,
+body[data-theme="k-on"] .module-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.8), rgba(251, 191, 36, 0.6), transparent);
+    pointer-events: none;
+}
+
+body[data-theme="kon"] .weather-launch-btn,
+body[data-theme="k-on"] .weather-launch-btn {
+    background: linear-gradient(135deg, #D97706, #F59E0B);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.35);
+}
+
+/* --- 少女乐队的呐喊 GBC Special Decor --- */
+body[data-theme="gbc"] .control-center-panel,
+body[data-theme="togenashi"] .control-center-panel {
+    background-image: 
+        linear-gradient(135deg, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.2) 0%, transparent 60%);
+    border-radius: 20px;
+}
+
+body[data-theme="gbc"] .module-glass-card,
+body[data-theme="togenashi"] .module-glass-card {
+    border-radius: 14px;
+    position: relative;
+    border-left: 2px solid rgba(239, 68, 68, 0.7);
+}
+
+body[data-theme="gbc"] .weather-launch-card,
+body[data-theme="togenashi"] .weather-launch-card {
+    border-radius: 14px;
+    border-left: 2px solid rgba(239, 68, 68, 0.7);
+}
+
+body[data-theme="gbc"] .weather-launch-btn,
+body[data-theme="togenashi"] .weather-launch-btn {
+    background: #EF4444;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.5);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* ===================================================================
+   4. Top Navbar Theme Toggle Button
+   =================================================================== */
+.theme-nav-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    color: var(--text-primary);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 0.95);
+    color: var(--text-title);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.theme-nav-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ===================================================================
+   5. Theme Switcher Modal Styles (#theme-modal)
+   =================================================================== */
+.theme-modal-content {
+    max-width: 780px !important;
+    width: 92% !important;
+    padding: 24px 28px !important;
+    border-radius: 24px !important;
+    background: var(--theme-modal-bg, rgba(255, 255, 255, 0.65)) !important;
+    backdrop-filter: blur(32px) saturate(125%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(125%) !important;
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.6)) !important;
+    box-shadow: var(--glass-shadow-lg, 0 20px 60px rgba(0, 0, 0, 0.18)) !important;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: scaleUpIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.modal-subtitle {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+}
+
+/* Theme 6-Grid */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 4px 0;
+}
+
+@media (max-width: 680px) {
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Theme Card */
+.theme-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.40);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    user-select: none;
+}
+
+.theme-card:hover {
+    background: rgba(255, 255, 255, 0.40);
+    border-color: rgba(255, 255, 255, 0.75);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.theme-card.active {
+    background: rgba(255, 255, 255, 0.50);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color), 0 8px 26px var(--accent-glow);
+}
+
+/* Theme Visual Previews */
+.theme-preview {
+    height: 74px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+/* Miniature Glass UI Inside Card */
+.preview-mini-glass {
+    width: 86%;
+    height: 70%;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.preview-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 9999px;
+}
+
+.preview-bar {
+    width: 32px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* Preview Variant 1: Default Pure White Glass */
+.preview-default {
+    background: linear-gradient(135deg, #E2E8F0 0%, #F8FAFC 100%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+.preview-default .preview-mini-glass {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.preview-default .preview-badge {
+    background: #0284C7;
+    color: #ffffff;
+}
+
+/* Preview Variant 2: MyGO!!!!! */
+.preview-mygo {
+    background: linear-gradient(135deg, #0C2138 0%, #17385E 50%, #204B7B 100%);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.preview-mygo .preview-mini-glass {
+    background: rgba(16, 36, 60, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.6);
+}
+.preview-mygo .preview-badge {
+    background: #38BDF8;
+    color: #082F49;
+}
+
+/* Preview Variant 3: Ave Mujica */
+.preview-mujica {
+    background: linear-gradient(135deg, #0F081D 0%, #24113D 60%, #3D1030 100%);
+    border: 1px solid rgba(192, 132, 252, 0.4);
+}
+.preview-mujica .preview-mini-glass {
+    background: rgba(26, 14, 46, 0.8);
+    border: 1px solid rgba(225, 29, 72, 0.6);
+}
+.preview-mujica .preview-badge {
+    background: #E11D48;
+    color: #FFFFFF;
+}
+
+/* Preview Variant 4: 孤独摇滚 Bocchi */
+.preview-bocchi {
+    background: linear-gradient(135deg, #FFF1F5 0%, #FFE4E6 50%, #FED7AA 100%);
+    border: 1px solid rgba(244, 114, 182, 0.5);
+}
+.preview-bocchi .preview-mini-glass {
+    background: rgba(255, 241, 245, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.6);
+}
+.preview-bocchi .preview-badge {
+    background: #F43F5E;
+    color: #FFFFFF;
+}
+
+/* Preview Variant 5: 轻音少女 K-ON! */
+.preview-kon {
+    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+}
+.preview-kon .preview-mini-glass {
+    background: rgba(255, 248, 235, 0.85);
+    border: 1px solid rgba(245, 158, 11, 0.6);
+}
+.preview-kon .preview-badge {
+    background: #D97706;
+    color: #FFFFFF;
+}
+
+/* Preview Variant 6: 少女乐队的呐喊 GBC */
+.preview-gbc {
+    background: linear-gradient(135deg, #090E1A 0%, #111827 50%, #1F2937 100%);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+}
+.preview-gbc .preview-mini-glass {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(239, 68, 68, 0.7);
+}
+.preview-gbc .preview-badge {
+    background: #EF4444;
+    color: #FFFFFF;
+}
+
+/* Theme Typography & Info */
+.theme-info {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.theme-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.theme-name {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-title);
+}
+
+.theme-status-tag {
+    font-size: 0.64rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.35);
+    color: var(--text-primary);
+}
+
+.theme-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.25;
+}
+
+/* Selected Checkmark Indicator */
+.theme-check-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 2px 8px var(--accent-glow);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-check-icon::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.theme-card.active .theme-check-icon {
+    display: flex;
+}
+
+/* Footer & Controls */
+.theme-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-glass, rgba(255, 255, 255, 0.4));
+}
+
+.theme-footer-tip {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.theme-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-apply-btn {
+    background: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--border-glass) !important;
+    box-shadow: 0 4px 14px var(--accent-glow) !important;
+}
+
+.theme-apply-btn:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+/* Theme Palette Swatches & Card Apply Button */
+.theme-palette-preview {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.theme-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.theme-card-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.5));
+    background: var(--button-bg, rgba(255, 255, 255, 0.4));
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-card.active .theme-card-btn {
+    background: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+}
+
+.theme-card-btn:hover {
+    background: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+}
+
+
+
+/* ===================================================================
+   Character Weather Voice Banner (.fs-character-voice-banner)
+   =================================================================== */
+.fs-character-voice-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 20px;
+    margin: 12px 28px;
+    background: var(--card-bg, rgba(255, 255, 255, 0.45));
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.52));
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.fs-character-voice-banner:hover {
+    border-color: var(--card-border-highlight, rgba(255, 255, 255, 0.85));
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+.char-voice-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.char-band-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--accent-color, #0284C7);
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.char-name-tag {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-title, #212429);
+}
+
+.char-role-tag {
+    font-size: 0.72rem;
+    color: var(--text-muted, #707782);
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+.char-quote-bubble {
+    flex: 1;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-primary, #30343B);
+    font-style: italic;
+    letter-spacing: 0.3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.char-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.char-action-pill-btn {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.5));
+    background: var(--button-bg, rgba(255, 255, 255, 0.45));
+    color: var(--text-primary, #30343B);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.char-action-pill-btn:hover {
+    background: var(--accent-color, #0284C7);
+    color: #ffffff;
+    border-color: var(--accent-color, #0284C7);
+    transform: translateY(-1px);
+}

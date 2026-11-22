@@ -1,0 +1,151 @@
+{
+  "version": "2.0.0",
+  "system": "Anime Girls Band Deep Theme Engine",
+  "defaultTheme": "default",
+  "themes": [
+    {
+      "id": "default",
+      "name": "默认原版",
+      "subname": "纯白玻璃拟态",
+      "band": "Original",
+      "desc": "通透清澈的白昼磨砂玻璃，高对比度文字与极简微光。",
+      "wallpaper": "/assets/themes/default/background.jpg",
+      "fallbackWallpaper": "/assets/images/anime_rainy_night.jpg",
+      "particleMode": "rain",
+      "particleName": "雨滴粒子",
+      "colors": ["#FFFFFF", "#E2E8F0", "#0284C7", "#30343B"],
+      "previewClass": "preview-default",
+      "badgeText": "DEFAULT",
+      "signatureTrack": "anime_rainy_night",
+      "opticalConfig": {
+        "glassBg": "rgba(255, 255, 255, 0.42)",
+        "cardBg": "rgba(255, 255, 255, 0.45)",
+        "blurPx": 28,
+        "saturatePct": 120,
+        "borderColor": "rgba(255, 255, 255, 0.52)",
+        "textTitle": "#212429",
+        "textPrimary": "#30343B"
+      }
+    },
+    {
+      "id": "mygo",
+      "name": "MyGO!!!!!",
+      "subname": "迷子青蓝雨夜",
+      "band": "MyGO!!!!!",
+      "desc": "迷茫中奔向微光的春日影与青苍雨夜，冷调冰蓝与深海苍青。",
+      "wallpaper": "/assets/themes/mygo/background.jpg",
+      "fallbackWallpaper": "/assets/images/anime_rainy_night.jpg",
+      "particleMode": "rain",
+      "particleName": "雨滴粒子",
+      "colors": ["#0C2138", "#17385E", "#38BDF8", "#E0F2FE"],
+      "previewClass": "preview-mygo",
+      "badgeText": "MyGO!!!!!",
+      "signatureTrack": "春日影 (Haruhikage)",
+      "opticalConfig": {
+        "glassBg": "rgba(12, 28, 48, 0.65)",
+        "cardBg": "rgba(16, 36, 60, 0.58)",
+        "blurPx": 28,
+        "saturatePct": 130,
+        "borderColor": "rgba(56, 189, 248, 0.38)",
+        "textTitle": "#F0F9FF",
+        "textPrimary": "#E0F2FE"
+      }
+    },
+    {
+      "id": "mujica",
+      "name": "Ave Mujica",
+      "subname": "暗夜黑曜蔷薇",
+      "band": "Ave Mujica",
+      "desc": "沉沦于黑曜剧场的假面玩偶，午夜猩红、银月冷辉与漆黑蔷薇。",
+      "wallpaper": "/assets/themes/mujica/background.jpg",
+      "fallbackWallpaper": "/assets/themes/mujica/background.jpg",
+      "particleMode": "petals",
+      "particleName": "暗蔷薇羽毛",
+      "colors": ["#0F081D", "#3D1030", "#E11D48", "#F7EDF5"],
+      "previewClass": "preview-mujica",
+      "badgeText": "Ave Mujica",
+      "signatureTrack": "KiLLKiSS",
+      "opticalConfig": {
+        "glassBg": "rgba(18, 10, 32, 0.72)",
+        "cardBg": "rgba(26, 14, 46, 0.65)",
+        "blurPx": 30,
+        "saturatePct": 140,
+        "borderColor": "rgba(192, 132, 252, 0.35)",
+        "textTitle": "#FAF5FF",
+        "textPrimary": "#F3E8FF"
+      }
+    },
+    {
+      "id": "bocchi",
+      "name": "孤独摇滚",
+      "subname": "结束乐队粉彩",
+      "band": "Kessoku Band",
+      "desc": "下北泽壁橱吉他手的内向青春，草莓甜粉、熟芒明黄与蓝紫电声。",
+      "wallpaper": "/assets/themes/bocchi/background.jpg",
+      "fallbackWallpaper": "/assets/themes/bocchi/background.jpg",
+      "particleMode": "stars",
+      "particleName": "星光粒子",
+      "colors": ["#FFF1F5", "#FED7AA", "#F43F5E", "#3C2235"],
+      "previewClass": "preview-bocchi",
+      "badgeText": "BOCCHI",
+      "signatureTrack": "青春コンプレックス (Seishun Complex)",
+      "opticalConfig": {
+        "glassBg": "rgba(253, 244, 246, 0.72)",
+        "cardBg": "rgba(255, 241, 245, 0.62)",
+        "blurPx": 26,
+        "saturatePct": 125,
+        "borderColor": "rgba(244, 114, 182, 0.45)",
+        "textTitle": "#260E18",
+        "textPrimary": "#3A1F28"
+      }
+    },
+    {
+      "id": "kon",
+      "name": "轻音少女",
+      "subname": "放学后下午茶暖调",
+      "band": "Houkago Tea Time",
+      "desc": "樱丘高校活动室的午后红茶与草莓蛋糕，暖木淡金与温柔奶油色。",
+      "wallpaper": "/assets/themes/kon/background.jpg",
+      "fallbackWallpaper": "/assets/themes/kon/background.jpg",
+      "particleMode": "sunny",
+      "particleName": "柔光暖茶粒子",
+      "colors": ["#FFFBEB", "#FDE68A", "#D97706", "#422B1D"],
+      "previewClass": "preview-kon",
+      "badgeText": "K-ON!",
+      "signatureTrack": "Don't say \"lazy\"",
+      "opticalConfig": {
+        "glassBg": "rgba(254, 250, 242, 0.75)",
+        "cardBg": "rgba(255, 248, 235, 0.65)",
+        "blurPx": 25,
+        "saturatePct": 120,
+        "borderColor": "rgba(245, 158, 11, 0.45)",
+        "textTitle": "#2E1002",
+        "textPrimary": "#451A03"
+      }
+    },
+    {
+      "id": "gbc",
+      "name": "少女乐队的呐喊",
+      "subname": "刺无赤黑霓虹",
+      "band": "Togenashi Togeari",
+      "desc": "川崎街头的无刺之刺与怒吼青春，高对比赤红、赛博青与反叛黑曜。",
+      "wallpaper": "/assets/themes/gbc/background.jpg",
+      "fallbackWallpaper": "/assets/themes/gbc/background.jpg",
+      "particleMode": "neon",
+      "particleName": "霓虹粒子",
+      "colors": ["#090E1A", "#1F2937", "#EF4444", "#00E5FF"],
+      "previewClass": "preview-gbc",
+      "badgeText": "GBC",
+      "signatureTrack": "雑踏、僕らの街 (Bleeding Hearts)",
+      "opticalConfig": {
+        "glassBg": "rgba(10, 16, 28, 0.75)",
+        "cardBg": "rgba(15, 23, 42, 0.68)",
+        "blurPx": 28,
+        "saturatePct": 135,
+        "borderColor": "rgba(239, 68, 68, 0.50)",
+        "textTitle": "#FFFFFF",
+        "textPrimary": "#F1F5F9"
+      }
+    }
+  ]
+}

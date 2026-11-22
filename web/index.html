@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ays2z-233 桌面助手</title>
+    <link rel="stylesheet" href="/web/css/style.css">
+    <link rel="stylesheet" href="/web/css/themes.css">
+</head>
+<body>
+    <!-- 动态背景图层 (只保留极速视频与图片格式 + 硬件加速粒子系统) -->
+    <div class="background-container">
+        <div id="bg-image" style="background-image: url('/assets/images/anime_rainy_night.jpg');"></div>
+        <canvas id="bg-canvas"></canvas>
+        <video id="bg-video" autoplay loop muted playsinline style="display:none;"></video>
+        <div class="bg-overlay-tint"></div>
+    </div>
+
+    <!-- ================= 顶部隐形悬浮工具栏 (默认透明度0.15，悬停完全浮现) ================= -->
+    <header class="stealth-top-toolbar pywebview-drag-region" id="stealth-top-toolbar">
+        <div class="toolbar-left">
+            <div class="toolbar-brand">ays2z-233</div>
+            <div class="city-capsule-list">
+                <button class="city-pill active" data-city="安阳市">安阳</button>
+                <button class="city-pill" data-city="北京市">北京</button>
+                <button class="city-pill" data-city="上海市">上海</button>
+                <button class="city-pill" data-city="广州市">广州</button>
+                <button class="city-pill" data-city="深圳市">深圳</button>
+                <button class="city-pill" data-city="杭州市">杭州</button>
+            </div>
+            <div class="city-search-box">
+                <input type="text" id="stealth-city-input" placeholder="输入城市名称...">
+                <button id="stealth-city-btn">查询</button>
+            </div>
+        </div>
+
+        <div class="toolbar-center">
+            <button class="mode-toggle-btn active" id="btn-state-overview" title="展开24小时逐时预报与12宫格全景看板">全景大屏 (24h+12宫格)</button>
+            <button class="mode-toggle-btn" id="btn-state-immersion" title="进入纯净壁纸沉浸模式">壁纸沉浸</button>
+        </div>
+
+        <div class="toolbar-right">
+            <button class="toolbar-btn" id="stealth-voice-btn" title="播报当前天气">播报</button>
+            <button class="toolbar-btn highlight" id="open-menu-center-btn" title="定时关机/壁纸管理/主题风格">选项菜单</button>
+            <button class="toolbar-win-btn" id="win-min-btn" title="最小化">—</button>
+            <button class="toolbar-win-btn close" id="win-close-btn" title="关闭窗口">×</button>
+        </div>
+    </header>
+
+    <!-- ================= 主视口容器 (统一承载状态 A 与状态 B) ================= -->
+    <main class="desk-viewport" id="desk-viewport">
+
+        <!-- ================= 状态 A：全景概览态 (Overview Mode - 启动默认) ================= -->
+        <section class="view-state view-overview" id="view-overview">
+            <!-- 1. 中上方：极简大时间与完整日期 -->
+            <div class="overview-time-block">
+                <div class="overview-clock" id="overview-clock">00:00:00</div>
+                <div class="overview-date" id="overview-date">加载中...</div>
+            </div>
+
+            <!-- 2. 全局唯一角色语录横幅 (严禁多处重复) -->
+            <div class="overview-character-banner" id="overview-character-banner">
+                <div class="char-badge" id="overview-char-badge">MyGO!!!!! · 高松灯</div>
+                <div class="char-quote" id="overview-char-quote">“呼出的气化成了白色的雾气，手指冻得有些僵硬。口袋里备着的创可贴变得硬邦邦的……要好好戴上手套和围巾，不要受凉了。”</div>
+                <div class="char-actions">
+                    <button class="char-btn" id="overview-char-next-btn" title="切换下一位角色">换角色</button>
+                    <button class="char-btn" id="overview-char-quote-btn" title="换一句台词">换台词</button>
+                </div>
+            </div>
+
+            <!-- 3. 底部：全景气象大看板 (24h逐时预报与MSN 12宫格同时展开) -->
+            <div class="overview-weather-deck" id="overview-weather-deck">
+                <!-- 顶部：实时气象摘要横条与操作区 -->
+                <div class="weather-summary-bar">
+                    <div class="sum-temp-group">
+                        <img src="/assets/weather/icons/305.svg" class="sum-icon" id="ov-weather-icon" alt="icon">
+                        <span class="sum-temp" id="ov-weather-temp">15°C</span>
+                        <span class="sum-cond" id="ov-weather-cond">小雨 · 安阳市</span>
+                        <span class="sum-range" id="ov-weather-range">今日 13° ~ 17°C</span>
+                    </div>
+                    
+                    <div class="sum-indices-group">
+                        <span class="sum-badge">体感 <b id="ov-weather-feels">14°C</b></span>
+                        <span class="sum-badge">空气 <b id="ov-weather-aqi">50 优</b></span>
+                        <span class="sum-badge">相对湿度 <b id="ov-weather-hum">53%</b></span>
+                        <span class="sum-badge">风力 <b id="ov-weather-wind">西南风 2级 (6 km/h)</b></span>
+                    </div>
+
+                    <div class="deck-actions-group">
+                        <button class="deck-action-pill" id="btn-toggle-7day" title="展开/收起 7 天预报">7天多日预报 ▼</button>
+                        <button class="deck-action-pill highlight" id="btn-dock-immersion" title="进入壁纸沉浸模式">壁纸沉浸 ↗</button>
+                    </div>
+                </div>
+
+                <!-- 7天多日预报横向卡片 (可选展开) -->
+                <div class="deck-pane-daily hidden" id="deck-pane-daily">
+                    <div class="overview-daily-grid" id="overview-daily-grid">
+                        <!-- 动态构建 7 天卡片 -->
+                    </div>
+                </div>
+
+                <!-- 区域 1: 24小时逐时温度与气象平滑折线图 (同时展开) -->
+                <div class="deck-section-hourly" id="deck-section-hourly">
+                    <div class="section-title-bar">
+                        <span class="sec-title">24小时逐时气象走势</span>
+                        <span class="sec-meta">平滑贝塞尔气温曲线 · 纯白高透发光图标 · 降水率与日出日落标记</span>
+                    </div>
+                    <div class="overview-chart-wrapper">
+                        <canvas id="overview-hourly-canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- 区域 2: MSN 12宫格高精度气象仪表盘 (同时展开) -->
+                <div class="deck-section-grid12" id="deck-section-grid12">
+                    <div class="section-title-bar">
+                        <span class="sec-title">实时详细气象指标 (MSN 12 宫格)</span>
+                        <span class="sec-meta">12项核心气象要素实时高精度监测</span>
+                    </div>
+                    <div class="detail-grid-12" id="overview-grid-12">
+                        <!-- 1. 温度 (Temperature) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">温度</span>
+                                <span class="grid-card-tag" id="ind-temp-tag">稳定</span>
+                            </div>
+                            <div class="grid-card-body-row">
+                                <div class="grid-card-main-val" id="ind-temp-val">15°C</div>
+                            </div>
+                            <div class="sparkline-wrapper">
+                                <div class="sparkline-bar-sample"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-temp-text">气温稳定，早晚温差适中，建议按时增添衣物。</div>
+                        </div>
+
+                        <!-- 2. 体感温度 (Feels Like) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">体感温度</span>
+                                <span class="grid-card-tag" id="ind-feels-tag">主要因素: 湿度</span>
+                            </div>
+                            <div class="grid-card-body-row">
+                                <div class="grid-card-main-val" id="ind-feels-val">体感 14°C</div>
+                            </div>
+                            <div class="sparkline-wrapper">
+                                <div class="sparkline-bar-sample" style="background: linear-gradient(90deg, #38bdf8, #f59e0b);"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-feels-desc">略有寒意 · 由于湿度原因，感觉比实际温度更暖和。</div>
+                        </div>
+
+                        <!-- 3. 云量 (Cloud Cover) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">云量</span>
+                                <span class="grid-card-tag" id="ind-cloud-tag">晴朗 5%</span>
+                            </div>
+                            <div class="cloud-radar-visual">
+                                <div class="cloud-ring-gauge">
+                                    <span class="cloud-pct-text" id="ind-cloud-val">晴朗 5%</span>
+                                </div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-cloud-text">少云覆盖，天高气爽，采光极佳。</div>
+                        </div>
+
+                        <!-- 4. 降水 (Precipitation) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">降水</span>
+                                <span class="grid-card-tag" id="ind-precip-tag">无降水</span>
+                            </div>
+                            <div class="grid-card-body-row">
+                                <div class="grid-card-main-val" id="ind-precip-val">0 毫米</div>
+                            </div>
+                            <div class="precip-timeline-bar">
+                                <div class="p-bar-fill" id="ind-precip-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-precip-text">未来 24 小时无明显降水过程。</div>
+                        </div>
+
+                        <!-- 5. 风速 (Wind Speed & Direction) -->
+                        <div class="grid-card-12 card-compass-deck">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">风速</span>
+                                <span class="grid-card-tag" id="ind-wind-tag">风力: 2 (轻风)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                <div class="compass-container">
+                                    <div class="compass-dial">
+                                        <span class="c-point c-n">北</span>
+                                        <span class="c-point c-e">东</span>
+                                        <span class="c-point c-s">南</span>
+                                        <span class="c-point c-w">西</span>
+                                        <div class="compass-needle" id="ind-compass-needle" style="transform: rotate(201deg);"></div>
+                                        <div class="compass-center-dot"></div>
+                                    </div>
+                                </div>
+                                <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                                    <div class="grid-card-main-val" id="ind-wind-val" style="font-size: 1.05rem;">西南风 2级 (6 km/h)</div>
+                                    <div style="font-size: 0.72rem; color: #BAE6FD;" id="ind-wind-deg">方位角 201° · 阵风 15 km/h</div>
+                                </div>
+                            </div>
+                            <div class="grid-card-sub-desc">风力稳定，保持平均风速，出行适宜。</div>
+                        </div>
+
+                        <!-- 6. 湿度与露点 (Humidity) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">湿度</span>
+                                <span class="grid-card-tag" id="ind-hum-tag">干燥</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <div class="grid-card-main-val" id="ind-hum-val">45% 相对湿度</div>
+                                <div style="font-size: 0.76rem; color: #BAE6FD;" id="ind-dew-val">-10° 露点</div>
+                            </div>
+                            <div class="humidity-pillar-meter">
+                                <div class="humidity-pillar-seg active"></div>
+                                <div class="humidity-pillar-seg active"></div>
+                                <div class="humidity-pillar-seg active"></div>
+                                <div class="humidity-pillar-seg active"></div>
+                                <div class="humidity-pillar-seg"></div>
+                                <div class="humidity-pillar-seg"></div>
+                                <div class="humidity-pillar-seg"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-hum-desc">持续下降，在下午时段达到最低值。</div>
+                        </div>
+
+                        <!-- 7. 紫外线 (UV Index) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">紫外线</span>
+                                <span class="grid-card-tag" id="ind-uv-tag">低</span>
+                            </div>
+                            <div class="grid-card-body-row">
+                                <div class="grid-card-main-val" id="ind-uv-val">低 (1)</div>
+                            </div>
+                            <div class="uv-bar-wrap">
+                                <div class="uv-needle-mark" id="ind-uv-needle" style="left: 10%;"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-uv-text">紫外线指数较低，在户外活动安全无须过多防护。</div>
+                        </div>
+
+                        <!-- 8. 空气质量指数 (AQI) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">空气质量指数</span>
+                                <span class="grid-card-tag" id="ind-aqi-tag">优</span>
+                            </div>
+                            <div class="aqi-widget-box">
+                                <div class="aqi-circle" id="ind-aqi-ring" style="border-color: #10b981;">
+                                    <span id="ind-aqi-val">50</span>
+                                </div>
+                                <div class="aqi-meta">
+                                    <div class="grid-card-main-val" id="ind-aqi-grade" style="font-size: 1.15rem;">50 优</div>
+                                    <div class="grid-card-sub-desc" id="ind-aqi-desc">优 (主要污染物: PM2.5 18 µg/m³)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9. 能见度 (Visibility) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">能见度</span>
+                                <span class="grid-card-tag" id="ind-vis-tag">极好</span>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div class="grid-card-main-val" id="ind-vis-val">17.6 公里</div>
+                                <div class="pyramid-wrap">
+                                    <div class="pyramid-level-1"></div>
+                                    <div class="pyramid-level-2"></div>
+                                    <div class="pyramid-level-3"></div>
+                                </div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-vis-desc">大气通透度极好，视线辽阔。</div>
+                        </div>
+
+                        <!-- 10. 气压 (Barometer) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">气压</span>
+                                <span class="grid-card-tag" id="ind-press-tag">缓慢上升</span>
+                            </div>
+                            <div class="grid-card-body-row">
+                                <div class="grid-card-main-val" id="ind-press-val">1027 hPa</div>
+                            </div>
+                            <div class="pressure-scale-bar">
+                                <div class="pressure-indicator" id="ind-press-indicator" style="left: 65%;"></div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-press-desc">在过去 3 小时内缓慢上升。预计在接下来的 3 小时内将下降。</div>
+                        </div>
+
+                        <!-- 11. 太阳轨迹 (Sun Arc) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">太阳</span>
+                                <span class="grid-card-tag" id="ind-sun-daylight">白昼 9小时50分钟</span>
+                            </div>
+                            <div class="sun-arc-wrap">
+                                <div class="sun-arc-curve">
+                                    <div class="sun-orb" id="ind-sun-orb" style="left: 50%;"></div>
+                                </div>
+                            </div>
+                            <div class="grid-card-sub-desc" id="ind-sun-times">日出 07:05 · 日落 16:55</div>
+                        </div>
+
+                        <!-- 12. 月相 (Moon Phase) -->
+                        <div class="grid-card-12">
+                            <div class="grid-card-header">
+                                <span class="grid-card-title">月相</span>
+                                <span class="grid-card-tag" id="ind-moon-tag">盈凸月</span>
+                            </div>
+                            <div class="moon-display">
+                                <div class="moon-sphere-3d" id="ind-moon-sphere"></div>
+                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                    <div class="grid-card-main-val" id="ind-moon-val" style="font-size: 1.15rem;">盈凸月</div>
+                                    <div class="grid-card-sub-desc" id="ind-moon-desc">照明度 82% · 距满月还有 3 天</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div></section>
+
+        <!-- ================= 状态 B：壁纸沉浸 + 边缘轮播态 (Immersion Mode - 常驻) ================= -->
+        <section class="view-state view-immersion hidden" id="view-immersion">
+            <!-- 1. 右上角极简无底色高透纯白发光时钟 (点击唤回全景概览) -->
+            <div class="immersion-top-clock" id="immersion-top-clock" title="点击展开全景概览态">
+                <div class="immersion-time" id="immersion-time">00:00</div>
+                <div class="immersion-date" id="immersion-date">11月22日 周日</div>
+            </div>
+
+            <!-- 2. 边缘循环轮播区 (右下角安全区，每次仅展示 1 个模块，8秒平滑切换) -->
+            <div class="peripheral-carousel" id="peripheral-carousel">
+                <div class="carousel-cards-viewport">
+                    <!-- 轮播模块 1：极简天气卡片 -->
+                    <div class="carousel-card active" id="carousel-card-weather" data-index="0">
+                        <div class="c-card-header">
+                            <span class="c-city-badge" id="c-card-city">安阳市 · 今日气象</span>
+                            <button class="c-mini-btn" id="c-btn-open-grid12" title="查看MSN 12宫格指标">详细指标 ↗</button>
+                        </div>
+                        <div class="c-weather-main">
+                            <img src="/assets/weather/icons/305.svg" class="c-weather-icon" id="c-weather-icon" alt="icon">
+                            <div class="c-temp-block">
+                                <span class="c-temp" id="c-weather-temp">15°C</span>
+                                <span class="c-cond" id="c-weather-cond">小雨</span>
+                            </div>
+                        </div>
+                        <div class="c-metrics-grid">
+                            <div class="c-metric-item"><span class="lbl">温度区间</span><span class="val" id="c-weather-range">13° ~ 17°C</span></div>
+                            <div class="c-metric-item"><span class="lbl">体感气温</span><span class="val" id="c-weather-feels">14°C</span></div>
+                            <div class="c-metric-item"><span class="lbl">风向风力</span><span class="val" id="c-weather-wind">西南风 2级</span></div>
+                            <div class="c-metric-item"><span class="lbl">空气质量</span><span class="val" id="c-weather-aqi">50 优</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 轮播模块 2：角色伴侣语录胶囊 -->
+                    <div class="carousel-card" id="carousel-card-quote" data-index="1">
+                        <div class="c-card-header">
+                            <span class="c-companion-badge" id="c-quote-badge">MyGO!!!!! · 高松灯</span>
+                            <button class="c-mini-btn" id="c-quote-refresh-btn" title="换一句台词">换台词</button>
+                        </div>
+                        <div class="c-quote-body">
+                            <div class="c-quote-symbol">“</div>
+                            <div class="c-quote-text" id="c-quote-text">呼出的气化成了白色的雾气，手指冻得有些僵硬。口袋里备着的创可贴变得硬邦邦的……要好好戴上手套和围巾，不要受凉了。</div>
+                        </div>
+                    </div>
+
+                    <!-- 轮播模块 3：精简温度趋势 (未来几小时时序微缩) -->
+                    <div class="carousel-card" id="carousel-card-trend" data-index="2">
+                        <div class="c-card-header">
+                            <span class="c-city-badge">未来几小时气温走势</span>
+                            <span class="c-update-time">MSN 高精</span>
+                        </div>
+                        <div class="c-mini-hourly-row" id="c-mini-hourly-row">
+                            <!-- 动态注入时序小药丸 -->
+                        </div>
+                        <div class="c-trend-tip" id="c-trend-tip">未来几小时天气平稳，出行注意路况。</div>
+                    </div>
+                </div>
+
+                <!-- 轮播控制条与快速跳转 -->
+                <div class="carousel-controls">
+                    <div class="carousel-dots">
+                        <span class="c-dot active" data-index="0" title="今日天气"></span>
+                        <span class="c-dot" data-index="1" title="伴侣语录"></span>
+                        <span class="c-dot" data-index="2" title="气温走势"></span>
+                    </div>
+                    <div class="carousel-action-btn" id="btn-carousel-expand" title="点击展开全景概览">
+                        全景看板 &gt;
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- ================= 2级菜单中心 (Two-Tier Options Center) ================= -->
+    <div class="modal-overlay hidden" id="two-tier-menu-modal">
+        <div class="two-tier-modal-content">
+            <!-- 头部 -->
+            <div class="two-tier-header">
+                <div class="two-tier-title-group">
+                    <div class="two-tier-title">选项菜单</div>
+                    <div class="two-tier-subtitle">二级选项管理中心 · 分类与个性化参数</div>
+                </div>
+                <button class="win-btn" id="close-two-tier-menu-btn" title="关闭菜单">×</button>
+            </div>
+
+            <!-- 两级主体容器: 左侧一级菜单, 右侧二级选项 -->
+            <div class="two-tier-body">
+                <!-- 左侧一级菜单导航 -->
+                <nav class="tier1-sidebar">
+                    <button class="tier1-nav-item active" data-tab="shutdown">
+                        <span class="nav-item-dot"></span>
+                        <span class="nav-item-text">定时关机</span>
+                        <span class="nav-item-badge" id="badge-menu-shutdown">23:00</span>
+                    </button>
+                    <button class="tier1-nav-item" data-tab="wallpaper">
+                        <span class="nav-item-dot"></span>
+                        <span class="nav-item-text">壁纸管理</span>
+                        <span class="nav-item-badge" id="badge-menu-wallpaper">联动</span>
+                    </button>
+                    <button class="tier1-nav-item" data-tab="theme">
+                        <span class="nav-item-dot"></span>
+                        <span class="nav-item-text">主题风格</span>
+                        <span class="nav-item-badge" id="badge-menu-theme">原版</span>
+                    </button>
+                    <button class="tier1-nav-item" data-tab="settings">
+                        <span class="nav-item-dot"></span>
+                        <span class="nav-item-text">系统设置</span>
+                        <span class="nav-item-badge">参数</span>
+                    </button>
+                    <button class="tier1-nav-item" data-tab="easter-egg">
+                        <span class="nav-item-dot"></span>
+                        <span class="nav-item-text">互动彩蛋</span>
+                        <span class="nav-item-badge">乐队</span>
+                    </button>
+                </nav>
+
+                <!-- 右侧二级选项内容区 -->
+                <main class="tier2-content-pane">
+                    <!-- Tab 1: 定时关机与音乐二级选项 -->
+                    <section class="tier2-tab-pane active" id="pane-shutdown">
+                        <div class="tier2-pane-header">
+                            <div class="tier2-pane-title">定时关机与每日音乐</div>
+                            <span class="module-status-badge" id="menu-shutdown-status-badge">守护运行中</span>
+                        </div>
+
+                        <div class="tier2-form-card">
+                            <div class="time-setting-row">
+                                <span class="module-field-label">每日关机</span>
+                                <input type="time" id="shutdown-time-input" class="modern-time-input" value="23:00">
+                                <button class="btn-compact" id="save-time-btn">保存</button>
+                            </div>
+
+                            <div class="countdown-banner" id="shutdown-countdown-display">
+                                每日到达设定时间将自动播放音乐并在 5 分钟后关机
+                            </div>
+                        </div>
+
+                        <div class="tier2-form-card">
+                            <div class="compact-music-player">
+                                <button class="compact-play-btn" id="music-toggle-btn" title="播放/暂停音乐">
+                                    <span id="music-btn-text">播放</span>
+                                </button>
+                                <div class="compact-music-info">
+                                    <div class="music-name">每日专属音乐</div>
+                                    <div class="music-sub">星期一至日自动轮播</div>
+                                </div>
+                                <div class="music-eq" id="music-eq-anim" style="display:none;">
+                                    <span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
+
+                            <div class="compact-slider-row" style="margin-top: 10px;">
+                                <span class="slider-lbl">音量</span>
+                                <input type="range" id="volume-slider" class="modern-slider" min="0" max="100" value="80">
+                            </div>
+
+                            <label class="modern-checkbox-row" style="margin-top: 10px;">
+                                <input type="checkbox" id="autostart-checkbox">
+                                <span>开机自动启动</span>
+                            </label>
+                        </div>
+
+                        <div class="tier2-actions-row">
+                            <button class="btn-compact btn-danger-soft hidden" id="cancel-shutdown-btn">取消关机</button>
+                            <button class="btn-compact" id="test-shutdown-btn">测试关机</button>
+                        </div>
+                    </section>
+
+                    <!-- Tab 2: 壁纸分类管理二级选项 -->
+                    <section class="tier2-tab-pane" id="pane-wallpaper">
+                        <div class="tier2-pane-header">
+                            <div class="tier2-pane-title">壁纸分类与气象联动</div>
+                            <label class="switch-inline-label" title="气象变化时自动切换匹配天气壁纸">
+                                <input type="checkbox" id="wp-auto-switch-toggle" checked>
+                                <span>天气联动</span>
+                            </label>
+                        </div>
+
+                        <!-- 天气分类标签 -->
+                        <div class="wp-cat-tabs">
+                            <button class="wp-cat-tab active" data-category="all">全部</button>
+                            <button class="wp-cat-tab" data-category="sunny">晴天</button>
+                            <button class="wp-cat-tab" data-category="rainy">雨天</button>
+                            <button class="wp-cat-tab" data-category="snow">雪天</button>
+                            <button class="wp-cat-tab" data-category="fog">雾天</button>
+                            <button class="wp-cat-tab" data-category="video">视频壁纸</button>
+                        </div>
+
+                        <!-- 导入与扫描操作区 -->
+                        <div class="wp-import-actions">
+                            <button class="btn-primary" id="scan-steam-btn">扫描媒体</button>
+                            <button class="btn-primary" id="browse-folder-btn">选择目录</button>
+                            <button class="btn-primary" id="select-wp-file-btn">导入文件</button>
+                        </div>
+
+                        <!-- 壁纸网格 -->
+                        <div class="wallpaper-grid" id="wallpaper-grid">
+                            <!-- 动态注入壁纸项 -->
+                        </div>
+                    </section>
+
+                    <!-- Tab 3: 主题风格二级选项 -->
+                    <section class="tier2-tab-pane" id="pane-theme">
+                        <div class="tier2-pane-header">
+                            <div class="tier2-pane-title">少女乐队主题引擎</div>
+                            <span class="module-status-badge">零重绘热重载</span>
+                        </div>
+
+                        <!-- 6 大主题卡片网格 -->
+                        <div class="theme-grid" id="theme-grid">
+                            <!-- 1. 默认纯白玻璃拟态 -->
+                            <div class="theme-card active" data-theme-id="default">
+                                <div class="theme-preview preview-default">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">默认</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">纯白玻璃拟态</span>
+                                        <span class="theme-status-tag">雨滴粒子</span>
+                                    </div>
+                                    <div class="theme-desc">清透纯净 · 极简磨砂透光</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #FFFFFF;" title="#FFFFFF"></span>
+                                        <span class="color-dot" style="background: #E2E8F0;" title="#E2E8F0"></span>
+                                        <span class="color-dot" style="background: #0284C7;" title="#0284C7"></span>
+                                        <span class="color-dot" style="background: #30343B;" title="#30343B"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">使用中</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+
+                            <!-- 2. MyGO!!!!! -->
+                            <div class="theme-card" data-theme-id="mygo">
+                                <div class="theme-preview preview-mygo">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">MyGO</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">MyGO!!!!!</span>
+                                        <span class="theme-status-tag">雨滴粒子</span>
+                                    </div>
+                                    <div class="theme-desc">迷茫青蓝雨夜 · 卡带创可贴质感 · 冷调磨砂</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #0C2138;" title="#0C2138"></span>
+                                        <span class="color-dot" style="background: #17385E;" title="#17385E"></span>
+                                        <span class="color-dot" style="background: #38BDF8;" title="#38BDF8"></span>
+                                        <span class="color-dot" style="background: #E0F2FE;" title="#E0F2FE"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">应用</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+
+                            <!-- 3. Ave Mujica -->
+                            <div class="theme-card" data-theme-id="mujica">
+                                <div class="theme-preview preview-mujica">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">Mujica</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">Ave Mujica</span>
+                                        <span class="theme-status-tag">暗蔷薇羽毛</span>
+                                    </div>
+                                    <div class="theme-desc">哥特假面 · 血蔷薇 · 月光黑曜石玻璃</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #0F081D;" title="#0F081D"></span>
+                                        <span class="color-dot" style="background: #3D1030;" title="#3D1030"></span>
+                                        <span class="color-dot" style="background: #E11D48;" title="#E11D48"></span>
+                                        <span class="color-dot" style="background: #F7EDF5;" title="#F7EDF5"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">应用</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+
+                            <!-- 4. 孤独摇滚 -->
+                            <div class="theme-card" data-theme-id="bocchi">
+                                <div class="theme-preview preview-bocchi">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">Bocchi</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">孤独摇滚</span>
+                                        <span class="theme-status-tag">星光粒子</span>
+                                    </div>
+                                    <div class="theme-desc">波奇粉霓光 · 效果器 · 纸箱浅卡其玻璃</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #FFF1F5;" title="#FFF1F5"></span>
+                                        <span class="color-dot" style="background: #FED7AA;" title="#FED7AA"></span>
+                                        <span class="color-dot" style="background: #F43F5E;" title="#F43F5E"></span>
+                                        <span class="color-dot" style="background: #3C2235;" title="#3C2235"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">应用</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+
+                            <!-- 5. 轻音少女 -->
+                            <div class="theme-card" data-theme-id="kon">
+                                <div class="theme-preview preview-kon">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">K-ON!</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">轻音少女</span>
+                                        <span class="theme-status-tag">柔光暖茶粒子</span>
+                                    </div>
+                                    <div class="theme-desc">放学后下午茶 · 红茶琥珀 · 温馨部室玻璃</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #FFFBEB;" title="#FFFBEB"></span>
+                                        <span class="color-dot" style="background: #FDE68A;" title="#FDE68A"></span>
+                                        <span class="color-dot" style="background: #D97706;" title="#D97706"></span>
+                                        <span class="color-dot" style="background: #422B1D;" title="#422B1D"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">应用</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+
+                            <!-- 6. 少女乐队的呐喊 -->
+                            <div class="theme-card" data-theme-id="gbc">
+                                <div class="theme-preview preview-gbc">
+                                    <div class="preview-mini-glass">
+                                        <span class="preview-badge">GBC</span>
+                                        <div class="preview-bar"></div>
+                                    </div>
+                                </div>
+                                <div class="theme-info">
+                                    <div class="theme-name-row">
+                                        <span class="theme-name">少女乐队的呐喊</span>
+                                        <span class="theme-status-tag">霓虹粒子</span>
+                                    </div>
+                                    <div class="theme-desc">川崎夜景冷蓝 · 刺目赤红 · 尖锐朋克玻璃</div>
+                                    <div class="theme-palette-preview">
+                                        <span class="color-dot" style="background: #090E1A;" title="#090E1A"></span>
+                                        <span class="color-dot" style="background: #1F2937;" title="#1F2937"></span>
+                                        <span class="color-dot" style="background: #EF4444;" title="#EF4444"></span>
+                                        <span class="color-dot" style="background: #00E5FF;" title="#00E5FF"></span>
+                                    </div>
+                                    <div class="theme-card-actions">
+                                        <button class="theme-card-btn">应用</button>
+                                    </div>
+                                </div>
+                                <div class="theme-check-icon"></div>
+                            </div>
+                        </div>
+
+                        <!-- 底部说明 -->
+                        <div class="theme-modal-footer">
+                            <div class="theme-footer-tip">主题设置将实时生效并持久保存</div>
+                        </div>
+                    </section>
+
+                    <!-- Tab 4: 系统高级设置二级选项 -->
+                    <section class="tier2-tab-pane" id="pane-settings">
+                        <div class="tier2-pane-header">
+                            <div class="tier2-pane-title">系统参数与安全</div>
+                            <span class="module-status-badge">本地配置</span>
+                        </div>
+
+                        <div class="tier2-form-card">
+                            <div class="form-group">
+                                <label class="form-label">城市名称或代码 (如: 北京、上海、安阳 或 101180201)</label>
+                                <input type="text" id="cfg-location" class="form-input" value="101180201">
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label class="form-label">主题引擎下拉选择</label>
+                                <select id="cfg-theme" class="form-input">
+                                    <option value="default">默认原版（纯白磨砂玻璃 · 月夜雨景）</option>
+                                    <option value="mygo">MyGO!!!!!（迷茫青蓝雨夜 · 创可贴与磁带）</option>
+                                    <option value="ave-mujica">Ave Mujica（暗月黑曜紫 · 哥特假面与血色蔷薇）</option>
+                                    <option value="bocchi">孤独摇滚（结束乐队 · 小波奇粉红与芒果箱卡其）</option>
+                                    <option value="k-on">轻音少女（放学后 TEA TIME · 红茶琥珀与暖木蛋糕）</option>
+                                    <option value="togenashi">少女乐队的呐喊（刺无 · 川崎夜景冷蓝配刺目赤红）</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label class="form-label">修改设置密码 (留空则保持原密码)</label>
+                                <input type="password" id="cfg-newpwd" class="form-input" placeholder="输入新密码">
+                            </div>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px;">
+                                <button class="btn-primary" id="save-settings-btn">保存设置</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab 5: 互动彩蛋二级选项 -->
+                    <section class="tier2-tab-pane" id="pane-easter-egg">
+                        <div class="tier2-pane-header">
+                            <div class="tier2-pane-title">互动彩蛋</div>
+                            <span class="module-status-badge">全屏立绘</span>
+                        </div>
+                        <div class="tier2-form-card" style="text-align: center; padding: 32px 20px;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">雨夜车场与少女乐队专属互动</div>
+                            <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">点击下方按钮可进入全屏视差互动视窗，按 ESC 或点击任意位置可随时退出。</div>
+                            <button class="btn-primary" id="trigger-fullscreen-egg-btn" style="padding: 8px 28px;">进入彩蛋</button>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗: 密码验证 (Settings Gate) -->
+    <div class="modal-overlay hidden" id="password-modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <div class="modal-title">权限验证</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">请输入设置密码 (默认密码: 1)</label>
+                <input type="password" id="pwd-input" class="form-input" placeholder="输入密码后按回车">
+            </div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+                <button class="btn-primary" id="pwd-cancel-btn" style="background: transparent;">取消</button>
+                <button class="btn-primary" id="pwd-submit-btn">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全屏彩蛋图层 -->
+    <div class="easter-egg-fullscreen hidden" id="easter-egg-modal" title="点击任意位置或按 ESC 退出">
+        <img src="/assets/images/easter-egg.png" alt="Easter Egg" class="easter-egg-img">
+    </div>
+
+    <!-- Toast 消息容器 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- 脚本引入 -->
+    <script src="/web/js/particles.js"></script>
+    <script src="/web/js/audio_manager.js"></script>
+    <script src="/web/js/wallpaper.js"></script>
+    <script src="/web/js/character_tips.js"></script>
+    <script src="/web/js/weather_chart.js"></script>
+    <script src="/web/js/weather.js"></script>
+    <script src="/web/js/theme_manager.js"></script>
+    <script src="/web/js/desk_state_manager.js"></script>
+    <script src="/web/js/app.js"></script>
+</body>
+</html>

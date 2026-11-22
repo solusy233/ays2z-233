@@ -1,0 +1,17 @@
+{
+    "password": "1",
+    "startTime": "23:01",
+    "averageTemperature": 21.5,
+    "weatherUpdateTime": "2026-09-24T21:04+08:00",
+    "locationId": "101180201",
+    "cityName": "安阳",
+    "wallpaperType": "classic",
+    "wallpaperPath": "/assets/themes/gbc/background.jpg",
+    "wallpaperFile": "",
+    "wallpaperAutoSwitch": true,
+    "theme": "default",
+    "currentTheme": "gbc",
+    "autoStart": false,
+    "volume": 1,
+    "exePath": ""
+}

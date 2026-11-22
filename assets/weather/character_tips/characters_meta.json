@@ -1,0 +1,68 @@
+{
+  "bands": [
+    {
+      "id": "mygo",
+      "name": "MyGO!!!!!",
+      "themeId": "mygo",
+      "defaultCharacterId": "tomori",
+      "characters": [
+        { "id": "tomori", "name": "高松灯", "role": "主唱", "file": "mygo/tomori.json" },
+        { "id": "anon", "name": "千早爱音", "role": "吉他手", "file": "mygo/anon.json" },
+        { "id": "raana", "name": "要乐奈", "role": "吉他手", "file": "mygo/raana.json" },
+        { "id": "soyo", "name": "长崎爽世", "role": "贝斯手", "file": "mygo/soyo.json" },
+        { "id": "taki", "name": "椎名立希", "role": "鼓手", "file": "mygo/taki.json" }
+      ]
+    },
+    {
+      "id": "mujica",
+      "name": "Ave Mujica",
+      "themeId": "mujica",
+      "defaultCharacterId": "sakiko",
+      "characters": [
+        { "id": "sakiko", "name": "丰川祥子", "role": "键盘手 / 领队", "file": "mujica/sakiko.json" },
+        { "id": "mutsumi", "name": "若叶睦", "role": "吉他手", "file": "mujica/mutsumi.json" },
+        { "id": "umiri", "name": "八幡海铃", "role": "贝斯手", "file": "mujica/umiri.json" },
+        { "id": "nyamu", "name": "祐天寺若麦", "role": "鼓手", "file": "mujica/nyamu.json" },
+        { "id": "uika", "name": "三角初华", "role": "主唱 / 吉他手", "file": "mujica/uika.json" }
+      ]
+    },
+    {
+      "id": "bocchi",
+      "name": "结束乐队",
+      "themeId": "bocchi",
+      "defaultCharacterId": "hitori",
+      "characters": [
+        { "id": "hitori", "name": "后藤一里", "role": "主音吉他手", "file": "bocchi/hitori.json" },
+        { "id": "nijika", "name": "伊地知虹夏", "role": "鼓手 / 队长", "file": "bocchi/nijika.json" },
+        { "id": "ryo", "name": "山田凉", "role": "贝斯手", "file": "bocchi/ryo.json" },
+        { "id": "kita", "name": "喜多郁代", "role": "主唱 / 节奏吉他手", "file": "bocchi/kita.json" }
+      ]
+    },
+    {
+      "id": "kon",
+      "name": "放学后TEA TIME",
+      "themeId": "kon",
+      "defaultCharacterId": "yui",
+      "characters": [
+        { "id": "yui", "name": "平泽唯", "role": "主唱 / 吉他手", "file": "kon/yui.json" },
+        { "id": "mio", "name": "秋山澪", "role": "贝斯手 / 作词", "file": "kon/mio.json" },
+        { "id": "ritsu", "name": "田井中律", "role": "鼓手 / 部长", "file": "kon/ritsu.json" },
+        { "id": "mugi", "name": "琴吹紬", "role": "键盘手", "file": "kon/mugi.json" },
+        { "id": "azusa", "name": "中野梓", "role": "节奏吉他手", "file": "kon/azusa.json" }
+      ]
+    },
+    {
+      "id": "gbc",
+      "name": "Togenashi Togeari",
+      "themeId": "gbc",
+      "defaultCharacterId": "nina",
+      "characters": [
+        { "id": "nina", "name": "井芹仁菜", "role": "主唱", "file": "gbc/nina.json" },
+        { "id": "momoka", "name": "河原木桃香", "role": "吉他手 / 领队", "file": "gbc/momoka.json" },
+        { "id": "subaru", "name": "安和昴", "role": "鼓手", "file": "gbc/subaru.json" },
+        { "id": "tomo", "name": "海老冢智", "role": "键盘手", "file": "gbc/tomo.json" },
+        { "id": "rupa", "name": "鲁帕", "role": "贝斯手", "file": "gbc/rupa.json" }
+      ]
+    }
+  ]
+}
